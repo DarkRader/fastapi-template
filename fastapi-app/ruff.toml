@@ -1,0 +1,13 @@
+line-length = 100
+exclude = [".venv"]
+src = ["fastapi-app"]
+
+[lint]
+select = ["ALL"]
+ignore = ["COM812", "D102", "D107", "D203", "D212"]
+exclude = ["src/migrations/versions/*"]
+
+[format]
+quote-style = "double"
+line-ending = "auto"
+indent-style = "space"
