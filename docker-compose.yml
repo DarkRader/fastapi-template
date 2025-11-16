@@ -1,0 +1,47 @@
+services:
+  db:
+    container_name: db
+    image: postgres:18.1
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${DB__POSTGRES_USER}
+      POSTGRES_PASSWORD: ${DB__POSTGRES_PASSWORD}
+      POSTGRES_DB: ${DB__POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+    networks:
+      - internal
+
+  template-api:
+    container_name: template-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB__POSTGRES_USER: ${DB__POSTGRES_USER}
+      DB__POSTGRES_PASSWORD: ${DB__POSTGRES_PASSWORD}
+      DB__POSTGRES_DB: ${DB__POSTGRES_DB}
+      DB__POSTGRES_SERVER: db
+    depends_on:
+      - db
+    restart: on-failure
+    # TODO finish action restart and rebuild
+#    develop:
+#      watch:
+#        - action: sync+restart
+#          path: ./reservation-app/src
+#          target: /usr/src/app/src
+    volumes:
+      - ./app/src:/usr/src/app/src
+    ports:
+      - "8000:8000"
+    networks:
+      - internal
+
+networks:
+  internal:
+
+volumes:
+  postgres_data:
