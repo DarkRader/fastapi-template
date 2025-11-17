@@ -4,11 +4,7 @@ import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
-# from api.routers import router
 from core.config import settings
-
-# from core.application.docs import fastapi_docs
-# from core.application.exceptions import register_errors_handlers
 from core.db import db_session
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
@@ -45,9 +41,10 @@ def create_app() -> FastAPI:
 
     :return: A fully configured FastAPI app instance.
     """
-    from api.routers import router
-    from core.application.docs import fastapi_docs
-    from core.application.exceptions import register_errors_handlers
+    # Local imports to avoid circular import
+    from api.routers import router  # noqa: PLC0415
+    from core.application.docs import fastapi_docs  # noqa: PLC0415
+    from core.application.exceptions import register_errors_handlers  # noqa: PLC0415
 
     app = FastAPI(
         title=fastapi_docs.NAME,

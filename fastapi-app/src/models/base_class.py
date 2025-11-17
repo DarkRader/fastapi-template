@@ -19,7 +19,7 @@ class Base(DeclarativeBase):
         default=lambda: uuid4().hex,
     )
 
-    @declared_attr  # type: ignore[override]
+    @declared_attr  # type: ignore[arg-type]
     def __tablename__(cls) -> str:  # noqa: N805  # declared_attr uses class method style
         """Generate a table name based on the lowercase class name."""
         return cls.__name__.lower()

@@ -67,7 +67,7 @@ class BaseCRUDRouter[
         enable_update: bool = True,
         enable_restore: bool = True,
         enable_delete: bool = True,
-    ):
+    ) -> None:
         self.router = router
         self.service_dep = service_dep
         self.schema_create = schema_create
@@ -103,7 +103,7 @@ class BaseCRUDRouter[
                 register_fn()
 
     # ---------- route registrations ----------
-    def register_get_all(self):
+    def register_get_all(self) -> None:
         """Register the GET / endpoint to retrieve all entities."""
         schema_lite: type[TReadLite] = self.schema_lite
         service_dep: Callable[..., TService] = self.service_dep
@@ -115,8 +115,11 @@ class BaseCRUDRouter[
         )
         async def get_all(
             service: Annotated[service_dep, Depends(service_dep)],
-            include_removed: bool = Query(False, description="Include `removed objects` or not."),
-        ):
+            *,
+            include_removed: bool = Query(
+                default=False, description="Include `removed objects` or not."
+            ),
+        ) -> list[TReadLite]:
             """Get all objects."""
             logger.info(
                 "Fetching all %s (include_removed=%s)", self.entity_name.value, include_removed
@@ -125,7 +128,7 @@ class BaseCRUDRouter[
             logger.debug("Fetched %d objects", len(result))
             return result
 
-    def register_get_by_id(self):
+    def register_get_by_id(self) -> None:
         """Register the GET /{id} endpoint to retrieve an entity by its ID."""
         schema_detail: type[TReadDetail] = self.schema_detail
         service_dep: Callable[..., TService] = self.service_dep
@@ -139,8 +142,11 @@ class BaseCRUDRouter[
         async def get_by_id(
             service: Annotated[service_dep, Depends(service_dep)],
             id_: Annotated[str | int, Path(alias="id", description="The ID of the object.")],
-            include_removed: bool = Query(False, description="Include `removed object` or not."),
-        ):
+            *,
+            include_removed: bool = Query(
+                default=False, description="Include `removed object` or not."
+            ),
+        ) -> TReadDetail:
             """Get object."""
             logger.info(
                 "Fetching %s by id=%s (include_removed=%s)",
@@ -152,7 +158,7 @@ class BaseCRUDRouter[
             logger.debug("Fetched %s: %s", self.entity_name.value, obj)
             return obj
 
-    def register_create(self):
+    def register_create(self) -> None:
         """Register the POST / endpoint to create a new entity."""
         schema_create: type[TCreate] = self.schema_create
         schema_detail: type[TReadDetail] = self.schema_detail
@@ -167,13 +173,13 @@ class BaseCRUDRouter[
         async def create(
             service: Annotated[service_dep, Depends(service_dep)],
             obj_create: schema_create,
-        ):
+        ) -> TReadDetail:
             """Create object, only users with special roles can create object."""
             obj = await self._create_single_object(service, obj_create)
             logger.debug("Created %s: %s", self.entity_name.value, obj)
             return obj
 
-    def register_create_multiple(self):
+    def register_create_multiple(self) -> None:
         """Register the POST / endpoint to create multiple entities."""
         schema_create: type[TCreate] = self.schema_create
         schema_detail: type[TReadDetail] = self.schema_detail
@@ -188,7 +194,7 @@ class BaseCRUDRouter[
         async def create_multiple(
             service: Annotated[service_dep, Depends(service_dep)],
             objs_create: list[schema_create],
-        ):
+        ) -> TReadDetail:
             """Create multiple objects in a single request."""
             objs_result: list[schema_detail] = []
             for obj_create in objs_create:
@@ -197,7 +203,7 @@ class BaseCRUDRouter[
                 objs_result.append(obj)
             return objs_result
 
-    def register_update(self):
+    def register_update(self) -> None:
         """Register the PUT /{id} endpoint to update an existing entity."""
         schema_update: type[TUpdate] = self.schema_update
         schema_detail: type[TReadDetail] = self.schema_detail
@@ -213,13 +219,13 @@ class BaseCRUDRouter[
             service: Annotated[service_dep, Depends(service_dep)],
             id_: Annotated[str | int, Path(alias="id", description="The ID of the object.")],
             obj_update: schema_update,
-        ):
+        ) -> TReadDetail:
             """Update object, only users with special roles can update object."""
             obj = await service.update(id_, obj_update)
             logger.debug("Updated %s: %s", self.entity_name.value, obj)
             return obj
 
-    def register_restore(self):
+    def register_restore(self) -> None:
         """Register the PUT /{id}/restore endpoint to restore soft delete entity."""
         schema_detail: type[TReadDetail] = self.schema_detail
         service_dep: Callable[..., TService] = self.service_dep
@@ -233,13 +239,13 @@ class BaseCRUDRouter[
         async def restore(
             service: Annotated[service_dep, Depends(service_dep)],
             id_: Annotated[str | int, Path(alias="id", description="The ID of the object.")],
-        ):
+        ) -> TReadDetail:
             """Restore a soft-deleted object, only users with special roles can restore object."""
             obj = await service.restore(id_)
             logger.debug("Restored object: %s", obj)
             return obj
 
-    def register_delete(self):
+    def register_delete(self) -> None:
         """Register the DELETE /{id} endpoint to delete an entity."""
         schema_lite: type[TReadLite] = self.schema_lite
         service_dep: Callable[..., TService] = self.service_dep
@@ -253,8 +259,11 @@ class BaseCRUDRouter[
         async def delete(
             service: Annotated[service_dep, Depends(service_dep)],
             id_: Annotated[str | int, Path(alias="id", description="The ID of the object.")],
-            hard_remove: bool = Query(False, description="`Hard remove` the object or not."),
-        ):
+            *,
+            hard_remove: bool = Query(
+                default=False, description="`Hard remove` the object or not."
+            ),
+        ) -> TReadLite:
             """Delete object, only users with special roles can delete object."""
             obj = await service.delete(id_, hard_remove)
             logger.debug("Deleted object: %s", obj)
@@ -275,5 +284,5 @@ class BaseCRUDRouter[
         """
         obj = await service.create(obj_create)
         if not obj:
-            raise BaseAppError()
+            raise BaseAppError
         return obj

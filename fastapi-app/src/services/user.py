@@ -73,9 +73,8 @@ class UserService(AbstractUserService):
     async def create_user(
         self,
     ) -> UserLite:
-
         user_create = UserCreate(
-            id=3152,
+            id="3152",
             username="tesawda",
             first_name="Karel",
             second_name="Gabon",

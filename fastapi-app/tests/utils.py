@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from core.models.base_class import Base
+from models.base_class import Base
 
 
 def as_dict(model: Base) -> dict[str, Any]:

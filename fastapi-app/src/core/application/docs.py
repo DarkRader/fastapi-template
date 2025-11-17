@@ -16,7 +16,6 @@ class FastApiDocs:
     NAME = "API template of the FastAPI projects"
     DESCRIPTION = (
         "This project serves as a FastAPI application template. "
-
         "## API Conventions\n"
         "- `POST`\n\n"
         "  - Creates a record in collection\n\n"

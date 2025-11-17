@@ -40,7 +40,8 @@ class AbstractCRUDService[
     @abstractmethod
     async def get(
         self,
-        id_: str | int,
+        id_: str,
+        *,
         include_removed: bool = False,
     ) -> SchemaDetail:
         """
@@ -56,7 +57,7 @@ class AbstractCRUDService[
         """
 
     @abstractmethod
-    async def get_all(self, include_removed: bool = False) -> list[SchemaLite]:
+    async def get_all(self, *, include_removed: bool = False) -> list[SchemaLite]:
         """
         Retrieve all objects from the database.
 
@@ -81,7 +82,7 @@ class AbstractCRUDService[
     @abstractmethod
     async def update(
         self,
-        id_: str | int,
+        id_: str,
         obj_in: UpdateSchema,
     ) -> SchemaDetail:
         """
@@ -94,7 +95,7 @@ class AbstractCRUDService[
         """
 
     @abstractmethod
-    async def restore(self, id_: str | int) -> SchemaDetail:
+    async def restore(self, id_: str) -> SchemaDetail:
         """
         Restore a previously soft-removed object by its ID.
 
@@ -104,7 +105,7 @@ class AbstractCRUDService[
         """
 
     @abstractmethod
-    async def delete(self, id_: str | int, hard_remove: bool = False) -> SchemaDetail:
+    async def delete(self, id_: str, *, hard_remove: bool = False) -> SchemaDetail:
         """
         Delete an object from the database.
 
@@ -134,23 +135,24 @@ class CrudServiceBase(
 
     async def get(
         self,
-        id_: str | int,
+        id_: str,
+        *,
         include_removed: bool = False,
     ) -> SchemaDetail:
-        obj = await self.crud.get(id_, include_removed)
+        obj = await self.crud.get(id_, include_removed=include_removed)
         if obj is None:
             raise EntityNotFoundError(self.entity_name, id_)
         return obj
 
-    async def get_all(self, include_removed: bool = False) -> list[SchemaLite]:
-        return await self.crud.get_all(include_removed)
+    async def get_all(self, *, include_removed: bool = False) -> list[SchemaLite]:
+        return await self.crud.get_all(include_removed=include_removed)
 
     async def create(self, obj_in: CreateSchema) -> SchemaDetail:
         return await self.crud.create(obj_in)
 
     async def update(
         self,
-        id_: str | int,
+        id_: str,
         obj_in: UpdateSchema,
     ) -> SchemaDetail:
         obj_to_update = await self.get(id_)
@@ -158,18 +160,20 @@ class CrudServiceBase(
             raise EntityNotFoundError(self.entity_name, id_)
         return await self.crud.update(db_obj=obj_to_update, obj_in=obj_in)
 
-    async def restore(self, id_: str | int) -> SchemaDetail:
-        obj = await self.get(id_, True)
-        if obj.deleted_at is None:  # type: ignore
-            raise BaseAppError(f"A {self.entity_name.value} was not soft deleted.")
+    async def restore(self, id_: str) -> SchemaDetail:
+        obj = await self.get(id_, include_removed=True)
+        if obj.deleted_at is None:  # type: ignore[attr-defined]
+            msg = f"A {self.entity_name.value} was not soft deleted."
+            raise BaseAppError(msg)
         if obj is None:
             raise EntityNotFoundError(self.entity_name, id_)
         return await self.crud.restore(obj)
 
-    async def delete(self, id_: str | int, hard_remove: bool = False) -> SchemaDetail:
-        obj = await self.get(id_, True)
+    async def delete(self, id_: str, *, hard_remove: bool = False) -> SchemaDetail:
+        obj = await self.get(id_, include_removed=True)
         if hard_remove:
             return await self.crud.remove(id_)
-        if obj.deleted_at is not None:  # type: ignore
-            raise BaseAppError(f"A {self.entity_name.value} is already soft deleted.")
+        if obj.deleted_at is not None:  # type: ignore[attr-defined]
+            msg = f"A {self.entity_name.value} is already soft deleted."
+            raise BaseAppError(msg)
         return await self.crud.soft_remove(obj)

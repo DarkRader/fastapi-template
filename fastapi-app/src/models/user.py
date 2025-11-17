@@ -9,7 +9,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 class User(Base, SoftDeleteMixin):
     """User model to create and manipulate user entity in the database."""
 
-    id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     first_name: Mapped[str] = mapped_column(String(50), nullable=False)
     second_name: Mapped[str] = mapped_column(String(50), nullable=False)

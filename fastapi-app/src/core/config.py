@@ -125,7 +125,7 @@ class Settings(BaseSettings):
     RUN: RunConfig = RunConfig()
     LOGGING: LoggingConfig = LoggingConfig()
     DB: DatabaseConfig
-    # OPENID: OpenIDConfig
+    # OPENID: OpenIDConfig  # noqa: ERA001
 
     model_config = SettingsConfigDict(
         case_sensitive=True,

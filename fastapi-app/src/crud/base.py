@@ -25,7 +25,8 @@ class AbstractCRUDBase[Model, CreateSchema, UpdateSchema](ABC):
     @abstractmethod
     async def get(
         self,
-        id_: str | int,
+        id_: str,
+        *,
         include_removed: bool = False,
     ) -> Model | None:
         """
@@ -40,7 +41,7 @@ class AbstractCRUDBase[Model, CreateSchema, UpdateSchema](ABC):
         """Retrieve a list of records with pagination."""
 
     @abstractmethod
-    async def get_all(self, include_removed: bool = False) -> list[Model]:
+    async def get_all(self, *, include_removed: bool = False) -> list[Model]:
         """
         Retrieve all records without pagination.
 
@@ -88,13 +89,14 @@ class CRUDBase(AbstractCRUDBase[Model, CreateSchema, UpdateSchema]):
     Handling common database operations with SQLAlchemy and FastAPI.
     """
 
-    def __init__(self, model: type[Model], db: AsyncSession):
+    def __init__(self, model: type[Model], db: AsyncSession) -> None:
         self.model: type[Model] = model
         self.db: AsyncSession = db
 
     async def get(
         self,
-        id_: str | int,
+        id_: str,
+        *,
         include_removed: bool = False,
     ) -> Model | None:
         if id_ is None:
@@ -112,7 +114,7 @@ class CRUDBase(AbstractCRUDBase[Model, CreateSchema, UpdateSchema]):
         result = await self.db.execute(stmt)
         return list(result.scalars().all())
 
-    async def get_all(self, include_removed: bool = False) -> list[Model]:
+    async def get_all(self, *, include_removed: bool = False) -> list[Model]:
         stmt = select(self.model).execution_options(include_deleted=include_removed)
         result = await self.db.execute(stmt)
         return list(result.scalars().all())
