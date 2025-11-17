@@ -257,6 +257,10 @@ ERROR_RESPONSES = {
         **BaseAppError.response(),
         **EntityNotFoundError.response(),
     },
+    "400_401": {
+        **BaseAppError.response(),
+        **UnauthorizedError.response(),
+    },
     "401_403": {
         **UnauthorizedError.response(),
         **PermissionDeniedError.response(),

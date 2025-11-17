@@ -111,10 +111,13 @@ class DatabaseConfig(BaseModel):
 class OpenIDConfig(BaseModel):
     """Config for OpenID."""
 
-    SERVER_URL: str
-    REALM: str
+    CLIENT_NAME: str
     CLIENT_ID: str
     CLIENT_SECRET: str
+    AUTH_URL: str
+    TOKEN_URL: str
+    METADATA_URL: str
+    SCOPES: list[str] = ["openid", "email", "profile"]
 
 
 class Settings(BaseSettings):
@@ -125,7 +128,7 @@ class Settings(BaseSettings):
     RUN: RunConfig = RunConfig()
     LOGGING: LoggingConfig = LoggingConfig()
     DB: DatabaseConfig
-    # OPENID: OpenIDConfig  # noqa: ERA001
+    OPENID: OpenIDConfig
 
     model_config = SettingsConfigDict(
         case_sensitive=True,

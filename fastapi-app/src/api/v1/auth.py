@@ -3,12 +3,15 @@
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, FastAPI, status
+from core import settings
+from core.application.exceptions import ERROR_RESPONSES
+from fastapi import APIRouter, Body, Depends, FastAPI, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, OAuth2AuthorizationCodeBearer
-from schemas import UserLite
+from integrations.openid import OpenIDAuthService
+from schemas import UserDetail
 from services import UserService
 
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -19,11 +22,8 @@ http_bearer = HTTPBearer()
 
 
 oauth2_scheme = OAuth2AuthorizationCodeBearer(
-    # authorizationUrl=f"{settings.KEYCLOAK.SERVER_URL}/realms/{settings.KEYCLOAK.REALM}"
-    authorizationUrl="https://example.com/realms/test"
-    "/protocol/openid-connect/auth?scope=openid roles",
-    tokenUrl="https://example.com/realms/test/protocol/openid-connect/token",
-    # tokenUrl=f"{settings.KEYCLOAK.SERVER_URL}/realms/{settings.KEYCLOAK.REALM}/protocol/openid-connect/token",
+    authorizationUrl=settings.OPENID.AUTH_URL,
+    tokenUrl=settings.OPENID.TOKEN_URL,
 )
 
 
@@ -45,29 +45,31 @@ async def get_token(token: Annotated[str, Depends(oauth2_scheme)]) -> dict:
 
 @router.post(
     "/login",
+    responses=ERROR_RESPONSES["401"],
     status_code=status.HTTP_200_OK,
 )
 async def login(
     user_service: Annotated[UserService, Depends(UserService)],
-    # keycloak_service: Annotated[KeycloakAuthService, Depends(KeycloakAuthService)],
+    openid_service: Annotated[OpenIDAuthService, Depends(OpenIDAuthService)],
     token: Annotated[HTTPAuthorizationCredentials, Depends(http_bearer)],
-) -> UserLite:
+) -> UserDetail:
     """Authenticate a user."""
-    logger.info("Login attempt started with bearer token.")
-
-    # user_info = await keycloak_service.get_user_info(token.credentials)
-    user = await user_service.create_user()
-    logger.info("User %s successfully authenticated and synced.", user.id)
+    log.info("Login attempt started with bearer token.")
+    user_info = await openid_service.get_user_info(token)
+    user = await user_service.create_user(user_info)
+    log.info("User %s successfully authenticated and synced.", user.id)
 
     return user
 
 
-@router.get("/logout")
-async def logout() -> dict:
-    """
-    Clean session of the current user.
-
-    :return: Message.
-    """
-    # TODO with token flow
-    return {"message": "Logged out"}
+@router.post(
+    "/logout",
+    responses=ERROR_RESPONSES["400_401"],
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def logout(
+    openid_service: Annotated[OpenIDAuthService, Depends(OpenIDAuthService)],
+    refresh_token: Annotated[str, Body()],
+) -> None:
+    """Clean session of the current user."""
+    await openid_service.logout(refresh_token)

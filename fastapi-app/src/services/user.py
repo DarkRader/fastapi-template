@@ -9,12 +9,13 @@ from abc import ABC, abstractmethod
 from typing import Annotated
 
 from core import db_session
-from core.application.exceptions import Entity
+from core.application.exceptions import Entity, EntityNotFoundError
 from crud import CRUDUser
 from fastapi import Depends
 from schemas import (
     UserCreate,
     UserDetail,
+    UserInfo,
     UserLite,
     UserUpdate,
 )
@@ -43,6 +44,7 @@ class AbstractUserService(
     @abstractmethod
     async def create_user(
         self,
+        user_info: UserInfo,
     ) -> UserLite:
         """
         Create a User in the database.
@@ -72,15 +74,24 @@ class UserService(AbstractUserService):
 
     async def create_user(
         self,
-    ) -> UserLite:
-        user_create = UserCreate(
-            id="3152",
-            username="tesawda",
-            first_name="Karel",
-            second_name="Gabon",
-            email="karel.gabon@example.com",
-        )
-        return await self.crud.create(user_create)
+        user_info: UserInfo,
+    ) -> UserDetail:
+        try:
+            user = await self.get(user_info.sub)
+        except EntityNotFoundError:
+            user = None
+            logger.info("User with sub %s not found, creating in db.", user_info.sub)
 
-    async def get_by_username(self, username: str) -> UserLite:
+        if not user:
+            user_create = UserCreate(
+                id=user_info.sub,
+                username=user_info.preferred_username,
+                first_name=user_info.given_name,
+                second_name=user_info.family_name,
+                email=user_info.email,
+            )
+            return await self.crud.create(user_create)
+        return user
+
+    async def get_by_username(self, username: str) -> UserDetail:
         return await self.crud.get_by_username(username)

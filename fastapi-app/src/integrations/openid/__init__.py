@@ -1,7 +1,7 @@
-# """Keycloak-specific service integrations with Authentication."""
-#
-# from integrations.openid.keycloak_auth import KeycloakAuthService
-#
-# __all__ = [
-#     "KeycloakAuthService",
-# ]
+"""Keycloak-specific service integrations with Authentication."""
+
+from integrations.openid.openid_auth import OpenIDAuthService
+
+__all__ = [
+    "OpenIDAuthService",
+]

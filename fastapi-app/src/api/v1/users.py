@@ -6,10 +6,9 @@ from typing import Annotated
 from api import get_current_user
 from core.application.exceptions import (
     ERROR_RESPONSES,
-    PermissionDeniedError,
 )
 from fastapi import APIRouter, Depends, FastAPI, status
-from schemas import UserLite
+from schemas import UserDetail, UserLite
 from services import UserService
 
 logger = logging.getLogger(__name__)
@@ -34,15 +33,11 @@ async def get_all(
     This endpoint is accessible only to users with the 'section_head' role.
     It returns a list of all registered users.
     """
-    logger.info("User %s requested list of all users.", user.id)
-
-    if not user.section_head:
-        logger.warning("Permission denied for user %s (not section_head).", user.id)
-        raise PermissionDeniedError("Permission Denied.")
+    logger.info("User %s requested list of all users.", user.username)
 
     users = await service.get_all()
 
-    logger.info("Returned %d users for section head %s.", len(users), user.id)
+    logger.info("Returned %d users for section head %s.", len(users), user.username)
     return users
 
 
@@ -52,8 +47,8 @@ async def get_all(
     status_code=status.HTTP_200_OK,
 )
 async def get_me(
-    user: Annotated[UserLite, Depends(get_current_user)],
-) -> UserLite:
+    user: Annotated[UserDetail, Depends(get_current_user)],
+) -> UserDetail:
     """Get currently authenticated user."""
-    logger.debug("Returning profile for user %s.", user.id)
+    logger.debug("Returning profile for user %s.", user.username)
     return user
