@@ -1,6 +1,6 @@
 services:
-  db:
-    container_name: db
+  template-db:
+    container_name: template-db
     image: postgres:18.1
     restart: on-failure
     environment:
@@ -25,7 +25,7 @@ services:
       DB__POSTGRES_DB: ${DB__POSTGRES_DB}
       DB__POSTGRES_SERVER: db
     depends_on:
-      - db
+      - template-db
     restart: on-failure
     # TODO finish action restart and rebuild
 #    develop:
