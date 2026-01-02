@@ -23,7 +23,14 @@ services:
       DB__POSTGRES_USER: ${DB__POSTGRES_USER}
       DB__POSTGRES_PASSWORD: ${DB__POSTGRES_PASSWORD}
       DB__POSTGRES_DB: ${DB__POSTGRES_DB}
-      DB__POSTGRES_SERVER: db
+      DB__POSTGRES_SERVER: template-db
+
+      OPENID__CLIENT_NAME: ${OPENID__CLIENT_NAME}
+      OPENID__CLIENT_ID: ${OPENID__CLIENT_ID}
+      OPENID__CLIENT_SECRET: ${OPENID__CLIENT_SECRET}
+      OPENID__AUTH_URL: ${OPENID__AUTH_URL}
+      OPENID__TOKEN_URL: ${OPENID__TOKEN_URL}
+      OPENID__METADATA_URL: ${OPENID__METADATA_URL}
     depends_on:
       - template-db
     restart: on-failure
@@ -34,7 +41,7 @@ services:
 #          path: ./reservation-app/src
 #          target: /usr/src/app/src
     volumes:
-      - ./app/src:/usr/src/app/src
+      - ./fastapi-app/src:/usr/src/app/src
     ports:
       - "8000:8000"
     networks:

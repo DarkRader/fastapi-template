@@ -1,12 +1,10 @@
 """Packages for core module."""
 
-from .application import create_app, uvicorn_run
-from .config import settings
-from .db import db_session
+from core.application import create_app, uvicorn_run
+from core.config import settings
 
 __all__ = [
     "create_app",
-    "db_session",
     "settings",
     "uvicorn_run",
 ]

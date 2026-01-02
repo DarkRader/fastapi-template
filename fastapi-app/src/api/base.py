@@ -18,6 +18,7 @@ TReadDetail = TypeVar("TReadDetail", bound=BaseModel)
 TService = TypeVar("TService", bound=CrudServiceBase)
 
 
+# ruff: noqa: PLR0913
 class BaseCRUDRouter[
     TCreate: BaseModel,
     TUpdate: BaseModel,

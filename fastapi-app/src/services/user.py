@@ -8,8 +8,8 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Annotated
 
-from core import db_session
 from core.application.exceptions import Entity, EntityNotFoundError
+from core.db import db_session
 from crud import CRUDUser
 from fastapi import Depends
 from schemas import (

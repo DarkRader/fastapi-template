@@ -42,7 +42,7 @@ def create_app() -> FastAPI:
     :return: A fully configured FastAPI app instance.
     """
     # Local imports to avoid circular import
-    from api.routers import router  # noqa: PLC0415
+    from api import router  # noqa: PLC0415
     from core.application.docs import fastapi_docs  # noqa: PLC0415
     from core.application.exceptions import register_errors_handlers  # noqa: PLC0415
 
