@@ -18,7 +18,7 @@ dependencies = [
     "requests-oauthlib==2.0.0",
     "httpx==0.28.1",
     "python-dateutil==2.9.0.post0",
-    "orjson==3.11.5",
+    "orjson==3.11.7",
     "gunicorn==23.0.0",
     "aiohttp==3.13.2",
     "hatchling==1.28.0",
