@@ -3,9 +3,9 @@
 import logging
 from typing import Annotated
 
+from adapter.openid import OpenIDAuthService
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from integrations.openid import OpenIDAuthService
 from schemas import UserDetail
 from services import UserService
 

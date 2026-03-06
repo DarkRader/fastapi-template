@@ -7,8 +7,8 @@ This class provides a common interface for services that implement CRUD operatio
 from abc import ABC, abstractmethod
 from typing import TypeVar
 
+from adapter.database import CRUDBase
 from core.application.exceptions import BaseAppError, Entity, EntityNotFoundError
-from crud import CRUDBase
 from pydantic import BaseModel
 
 SchemaLite = TypeVar("SchemaLite", bound=BaseModel)

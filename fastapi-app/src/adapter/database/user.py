@@ -7,7 +7,7 @@ implementation (CRUDUser) using SQLAlchemy.
 
 from abc import ABC, abstractmethod
 
-from crud import CRUDBase
+from adapter.database import CRUDBase
 from models import UserModel
 from schemas import UserCreate, UserUpdate
 from sqlalchemy import select
