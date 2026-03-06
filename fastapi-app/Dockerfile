@@ -1,28 +1,28 @@
 FROM python:3.14-slim
 
-ENV HOME=/usr/src/app
-ENV VENV_PATH=$HOME/.venv
-ENV PATH="$VENV_PATH/bin:$PATH"
+# install uv binary
+COPY --from=ghcr.io/astral-sh/uv:0.10.8 /uv /uvx /bin/
 
-ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+WORKDIR /app
 
-RUN apt-get update && apt-get install -y curl \
-  && curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV PATH="/app/.venv/bin:$PATH"
 
-RUN useradd --uid 8001 --user-group --home-dir $HOME --create-home app
-WORKDIR $HOME
-
-RUN python -m venv $VENV_PATH
-
+# install dependencies only
 COPY pyproject.toml uv.lock ./
-RUN $HOME/.local/bin/uv sync
 
-# copy source code
-COPY fastapi-app/ ./
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-install-project
 
-WORKDIR $HOME/src
+# copy project files
+COPY src ./src
+COPY scripts ./scripts
+COPY alembic.ini .
 
-RUN chmod +x ../scripts/run_migrations.sh
+# install project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen
 
-ENTRYPOINT ["../scripts/run_migrations.sh"]
+RUN chmod +x scripts/run_migrations.sh
+
+ENTRYPOINT ["scripts/run_migrations.sh"]
 CMD ["python", "main.py"]

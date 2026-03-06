@@ -1,3 +1,4 @@
+---
 services:
   template-db:
     container_name: template-db
@@ -17,8 +18,8 @@ services:
   template-api:
     container_name: template-backend
     build:
-      context: .
-      dockerfile: fastapi-app/Dockerfile
+      context: ./fastapi-app
+      dockerfile: Dockerfile
     restart: on-failure
     environment:
       DB__POSTGRES_USER: ${DB__POSTGRES_USER}
