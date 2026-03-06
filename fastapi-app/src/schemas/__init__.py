@@ -2,6 +2,7 @@
 
 from .openid import UserInfo
 from .user import UserCreate, UserDetail, UserLite, UserUpdate
+from .well_known import WellKnownResponse
 
 __all__ = [
     "UserCreate",
@@ -9,4 +10,5 @@ __all__ = [
     "UserInfo",
     "UserLite",
     "UserUpdate",
+    "WellKnownResponse",
 ]

@@ -30,18 +30,23 @@ class FastApiDocs:
         "- authorization_code"
     )
     VERSION = "0.1.0"
+    WELL_KNOWN_TAG: ClassVar[TagMeta] = TagMeta(
+        name="Well Known",
+        description="Application health and readiness endpoints.",
+    )
     AUTHORISATION_TAG: ClassVar[TagMeta] = TagMeta(
-        name="auth",
+        name="Auth",
         description="Authorisation in OpenID.",
     )
     USER_TAG: ClassVar[TagMeta] = TagMeta(
-        name="users",
+        name="Users",
         description="Operations with users.",
     )
 
     def get_tags_metadata(self) -> list[TagMeta]:
         """Get tags metadata."""
         return [
+            self.WELL_KNOWN_TAG,
             self.AUTHORISATION_TAG,
             self.USER_TAG,
         ]

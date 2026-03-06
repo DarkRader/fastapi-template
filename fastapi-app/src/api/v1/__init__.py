@@ -6,7 +6,7 @@ from core.application.docs import fastapi_docs
 from fastapi import APIRouter
 
 router = APIRouter(
-    prefix="/v2",
+    prefix="/v1",
 )
 
 router.include_router(

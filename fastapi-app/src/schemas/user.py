@@ -1,4 +1,4 @@
-"""DTO schemes for UserLite entity."""
+"""DTO schemes for User entity."""
 
 from datetime import datetime
 

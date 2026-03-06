@@ -1,4 +1,4 @@
-"""API controllers for authorisation in IS(Information System of the club)."""
+"""API controllers for authorisation in OpenID."""
 
 import logging
 from typing import Annotated
@@ -6,17 +6,14 @@ from typing import Annotated
 from adapter.openid import OpenIDAuthService
 from core import settings
 from core.application.exceptions import ERROR_RESPONSES
-from fastapi import APIRouter, Body, Depends, FastAPI, status
+from fastapi import APIRouter, Body, Depends, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, OAuth2AuthorizationCodeBearer
 from schemas import UserDetail
 from services import UserService
 
 log = logging.getLogger(__name__)
 
-app = FastAPI()
-
 router = APIRouter()
-
 
 http_bearer = HTTPBearer()
 

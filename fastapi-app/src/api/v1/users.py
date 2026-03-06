@@ -7,13 +7,11 @@ from api import get_current_user
 from core.application.exceptions import (
     ERROR_RESPONSES,
 )
-from fastapi import APIRouter, Depends, FastAPI, status
+from fastapi import APIRouter, Depends, status
 from schemas import UserDetail, UserLite
 from services import UserService
 
 logger = logging.getLogger(__name__)
-
-app = FastAPI()
 
 router = APIRouter()
 
