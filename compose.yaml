@@ -1,7 +1,7 @@
 services:
   template-db:
     container_name: template-db
-    image: postgres:18.1
+    image: postgres:18.3
     restart: on-failure
     environment:
       POSTGRES_USER: ${DB__POSTGRES_USER}
@@ -18,7 +18,7 @@ services:
     container_name: template-backend
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: fastapi-app/Dockerfile
     environment:
       DB__POSTGRES_USER: ${DB__POSTGRES_USER}
       DB__POSTGRES_PASSWORD: ${DB__POSTGRES_PASSWORD}
