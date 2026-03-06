@@ -19,6 +19,7 @@ services:
     build:
       context: .
       dockerfile: fastapi-app/Dockerfile
+    restart: on-failure
     environment:
       DB__POSTGRES_USER: ${DB__POSTGRES_USER}
       DB__POSTGRES_PASSWORD: ${DB__POSTGRES_PASSWORD}
@@ -33,7 +34,6 @@ services:
       OPENID__METADATA_URL: ${OPENID__METADATA_URL}
     depends_on:
       - template-db
-    restart: on-failure
     # TODO finish action restart and rebuild
 #    develop:
 #      watch:

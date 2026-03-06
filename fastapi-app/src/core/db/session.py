@@ -67,7 +67,7 @@ class DatabaseSession:
         await self.engine.dispose()
         log.info("Database engine disposed")
 
-    async def session_getter(self) -> AsyncGenerator[AsyncSession, None]:
+    async def session_getter(self) -> AsyncGenerator[AsyncSession]:
         """
         Yield an asynchronous database session.
 

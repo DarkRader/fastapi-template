@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def startup_event(fast_api_app: FastAPI) -> AsyncGenerator[None, None]:  # noqa: ARG001
+async def startup_event(fast_api_app: FastAPI) -> AsyncGenerator[None]:  # noqa: ARG001
     """
     Startup and shutdown lifecycle event handler.
 
