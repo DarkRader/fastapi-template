@@ -1,4 +1,5 @@
 """DTO schemes for Well Known responce entity."""
+
 from pydantic import BaseModel, Field
 
 

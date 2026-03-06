@@ -1,4 +1,5 @@
 """API controllers for well known."""
+
 from fastapi import APIRouter, status
 from schemas import WellKnownResponse
 
@@ -9,8 +10,7 @@ router = APIRouter()
     "/live",
     status_code=status.HTTP_200_OK,
 )
-async def live(
-) -> WellKnownResponse:
+async def live() -> WellKnownResponse:
     """
     Liveness probe.
 
@@ -18,12 +18,12 @@ async def live(
     """
     return WellKnownResponse(status="Ok")
 
+
 @router.get(
     "/ready",
     status_code=status.HTTP_200_OK,
 )
-async def ready(
-) -> WellKnownResponse:
+async def ready() -> WellKnownResponse:
     """
     Readiness probe.
 
