@@ -1,9 +1,11 @@
-"""DTO schemes for Well Known responce entity."""
+"""DTO schemes for Well Known response."""
 
-from pydantic import BaseModel, Field
+from typing import Literal
+
+from pydantic import BaseModel
 
 
 class WellKnownResponse(BaseModel):
     """Well Known Response schema."""
 
-    status: str = Field(..., example="Ok")
+    status: Literal["Ok"]
