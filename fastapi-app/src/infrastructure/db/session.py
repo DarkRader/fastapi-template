@@ -2,8 +2,10 @@
 
 import logging
 from collections.abc import AsyncGenerator
+from typing import Annotated
 
 from core.config import settings
+from fastapi import Depends
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -84,3 +86,5 @@ db_session = DatabaseSession(
     pool_size=settings.DB.POOL_SIZE,
     max_overflow=settings.DB.MAX_OVERFLOW,
 )
+
+AsyncSessionDep = Annotated[AsyncSession, Depends(db_session.session_getter)]

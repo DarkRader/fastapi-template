@@ -5,9 +5,9 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from core.config import settings
-from core.db import db_session
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
+from infrastructure.db import db_session
 from starlette.middleware.cors import CORSMiddleware
 
 log = logging.getLogger(__name__)

@@ -2,13 +2,11 @@
 
 from typing import Annotated
 
-from core.db import AsyncSessionDep
 from core.ports.repositories.user import UserRepository
 from fastapi import Depends
+from infrastructure.db import AsyncSessionDep
 from infrastructure.db.repositories.user import SQLAlchemyUserRepository
 from infrastructure.externals.openid_auth import OpenIdProvider
-
-# REPOSITORIES DEPENDENCIES
 
 
 def get_user_repository(
