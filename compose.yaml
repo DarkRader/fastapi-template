@@ -5,9 +5,9 @@ services:
     image: postgres:18.3
     restart: on-failure
     environment:
-      POSTGRES_USER: ${DB__POSTGRES_USER}
-      POSTGRES_PASSWORD: ${DB__POSTGRES_PASSWORD}
-      POSTGRES_DB: ${DB__POSTGRES_DB}
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: devdb
     volumes:
       - postgres_data:/var/lib/postgresql
     ports:
@@ -21,26 +21,12 @@ services:
       context: ./fastapi-app
       dockerfile: Dockerfile
     restart: on-failure
+    env_file:
+      - fastapi-app/.env
     environment:
-      DB__POSTGRES_USER: ${DB__POSTGRES_USER}
-      DB__POSTGRES_PASSWORD: ${DB__POSTGRES_PASSWORD}
-      DB__POSTGRES_DB: ${DB__POSTGRES_DB}
       DB__POSTGRES_SERVER: template-db
-
-      OPENID__CLIENT_NAME: ${OPENID__CLIENT_NAME}
-      OPENID__CLIENT_ID: ${OPENID__CLIENT_ID}
-      OPENID__CLIENT_SECRET: ${OPENID__CLIENT_SECRET}
-      OPENID__AUTH_URL: ${OPENID__AUTH_URL}
-      OPENID__TOKEN_URL: ${OPENID__TOKEN_URL}
-      OPENID__METADATA_URL: ${OPENID__METADATA_URL}
     depends_on:
       - template-db
-    # TODO finish action restart and rebuild
-#    develop:
-#      watch:
-#        - action: sync+restart
-#          path: ./reservation-app/src
-#          target: /usr/src/app/src
     volumes:
       - ./fastapi-app/src:/usr/src/app/src
     ports:
