@@ -3,13 +3,13 @@
 import logging
 from typing import Annotated
 
-from adapter.openid import OpenIDAuthService
 from core import settings
 from core.application.exceptions import ERROR_RESPONSES
+from core.dependencies.adapters import OpenIdProvider
+from core.dependencies.services import UserServiceDep
 from fastapi import APIRouter, Body, Depends, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, OAuth2AuthorizationCodeBearer
 from schemas import UserDetail
-from services import UserService
 
 log = logging.getLogger(__name__)
 
@@ -46,8 +46,8 @@ async def get_token(token: Annotated[str, Depends(oauth2_scheme)]) -> dict:
     status_code=status.HTTP_200_OK,
 )
 async def login(
-    user_service: Annotated[UserService, Depends(UserService)],
-    openid_service: Annotated[OpenIDAuthService, Depends(OpenIDAuthService)],
+    user_service: UserServiceDep,
+    openid_service: OpenIdProvider,
     token: Annotated[HTTPAuthorizationCredentials, Depends(http_bearer)],
 ) -> UserDetail:
     """Authenticate a user."""
@@ -65,7 +65,7 @@ async def login(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def logout(
-    openid_service: Annotated[OpenIDAuthService, Depends(OpenIDAuthService)],
+    openid_service: OpenIdProvider,
     refresh_token: Annotated[str, Body()],
 ) -> None:
     """Clean session of the current user."""

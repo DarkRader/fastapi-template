@@ -1,15 +1,14 @@
 """API controllers for users."""
 
 import logging
-from typing import Annotated
 
-from api import get_current_user
 from core.application.exceptions import (
     ERROR_RESPONSES,
 )
-from fastapi import APIRouter, Depends, status
+from core.dependencies.api import CurrentUserDep
+from core.dependencies.services import UserServiceDep
+from fastapi import APIRouter, status
 from schemas import UserDetail, UserLite
-from services import UserService
 
 logger = logging.getLogger(__name__)
 
@@ -22,8 +21,8 @@ router = APIRouter()
     status_code=status.HTTP_200_OK,
 )
 async def get_all(
-    service: Annotated[UserService, Depends(UserService)],
-    user: Annotated[UserLite, Depends(get_current_user)],
+    service: UserServiceDep,
+    user: CurrentUserDep,
 ) -> list[UserLite]:
     """
     Retrieve all users from the database.
@@ -45,7 +44,7 @@ async def get_all(
     status_code=status.HTTP_200_OK,
 )
 async def get_me(
-    user: Annotated[UserDetail, Depends(get_current_user)],
+    user: UserServiceDep,
 ) -> UserDetail:
     """Get currently authenticated user."""
     logger.debug("Returning profile for user %s.", user.username)

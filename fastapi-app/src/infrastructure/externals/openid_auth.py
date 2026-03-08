@@ -1,7 +1,6 @@
 """Defines the service for working with the Keycloak authorization."""
 
 import logging
-from abc import ABC, abstractmethod
 from typing import Any
 
 import aiohttp
@@ -10,6 +9,7 @@ from authlib.integrations.starlette_client import OAuth
 from authlib.jose import JsonWebToken
 from core import settings
 from core.application.exceptions import PermissionDeniedError, UnauthorizedError
+from core.ports.identity_provider import IdentityProvider
 from fastapi import status
 from fastapi.security import HTTPAuthorizationCredentials
 from schemas import UserInfo
@@ -17,45 +17,7 @@ from schemas import UserInfo
 log = logging.getLogger(__name__)
 
 
-class AbstractOpenIDAuthService(ABC):
-    """Interface for a service interacting with the OpenID Auth flow."""
-
-    @abstractmethod
-    async def decode_token(self, token: str) -> dict[str, Any]:
-        """
-        Decode an OpenID token.
-
-        This method decodes the given token using OpenID provider's public key
-        and ensures it is valid. If the token is invalid or expired,
-        an HTTP 401 Unauthorized error is raised.
-
-        :param token: The access token to decode.
-
-        :return: A dictionary containing the decoded token information.
-        """
-
-    @abstractmethod
-    async def get_user_info(self, token: HTTPAuthorizationCredentials) -> UserInfo:
-        """
-        Get user information from an access token.
-
-        :param token: The access token.
-
-        :return: A dictionary containing user profile information.
-        """
-
-    @abstractmethod
-    async def logout(self, refresh_token: str) -> None:
-        """
-        Log out a user by invalidating their refresh token.
-
-        :param refresh_token: The refresh token to invalidate.
-
-        :return: None
-        """
-
-
-class OpenIDAuthService(AbstractOpenIDAuthService):
+class OpenIdProvider(IdentityProvider):
     """OpenID client for authentication operations."""
 
     def __init__(self) -> None:

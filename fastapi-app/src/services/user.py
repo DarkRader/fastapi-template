@@ -6,12 +6,10 @@ This class works with User.
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Annotated
 
-from adapter.database import CRUDUser
 from core.application.exceptions import Entity, EntityNotFoundError
-from core.db import db_session
-from fastapi import Depends
+from core.dependencies.adapters import UserRepositoryDep
+from core.ports.repositories import UserRepository
 from schemas import (
     UserCreate,
     UserDetail,
@@ -20,7 +18,6 @@ from schemas import (
     UserUpdate,
 )
 from services import CrudServiceBase
-from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +26,7 @@ class AbstractUserService(
     CrudServiceBase[
         UserLite,
         UserDetail,
-        CRUDUser,
+        UserRepository,
         UserCreate,
         UserUpdate,
     ],
@@ -68,9 +65,9 @@ class UserService(AbstractUserService):
 
     def __init__(
         self,
-        db: Annotated[AsyncSession, Depends(db_session.session_getter)],
+        user_repository: UserRepositoryDep,
     ) -> None:
-        super().__init__(CRUDUser(db), Entity.USER)
+        super().__init__(user_repository, Entity.USER)
 
     async def create_user(
         self,

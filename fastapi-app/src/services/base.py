@@ -1,14 +1,18 @@
 """
-Define an abstract base class AbstractCRUDService.
+Ports and base services for CRUD operations.
 
-This class provides a common interface for services that implement CRUD operations on objects.
+This module defines abstract service interfaces (ports) and a generic base
+implementation for services that operate on domain models using CRUD repositories.
+
+It separates the service layer from the database implementation, allowing
+dependency inversion and easy substitution of concrete repositories.
 """
 
 from abc import ABC, abstractmethod
 from typing import TypeVar
 
-from adapter.database import CRUDBase
 from core.application.exceptions import BaseAppError, Entity, EntityNotFoundError
+from core.ports.repositories import CRUDBase
 from pydantic import BaseModel
 
 SchemaLite = TypeVar("SchemaLite", bound=BaseModel)
@@ -26,15 +30,12 @@ class AbstractCRUDService[
     UpdateSchema: BaseModel,
 ](ABC):
     """
-    Abstract base class for a CRUD service.
+    Service port defining the interface for CRUD operations.
 
-    This class defines a common interface for services that implement CRUD
-    (Create, Read, Update, Delete) operations on objects of type `ModelType`.
-
-    Additionally added the read_all implementation.
-
-    By subclassing this class, you can create a CRUD service that works with
-    objects of any type `ModelType`.
+    This is an abstract interface (port) for any service that manages
+    domain entities via a CRUD repository. It ensures that all services
+    expose a consistent set of operations without binding to a specific
+    database implementation.
     """
 
     @abstractmethod
@@ -118,15 +119,14 @@ class CrudServiceBase(
     AbstractCRUDService[SchemaLite, SchemaDetail, Crud, CreateSchema, UpdateSchema]
 ):
     """
-    A base class for implementing a CRUD (Create, Read, Update, Delete).
+    Generic base service implementing CRUD operations.
 
-    Service with methods for creating, reading, reading all, updating and deleting objects.
+    This base class implements the AbstractCRUDService interface using
+    a CRUD repository. It provides default behavior for creating, reading,
+    updating, soft-deleting, restoring, and hard-deleting entities.
 
-    It's a generic class that takes three type parameters:
-
-    ModelType which represents the type of objects being stored in the database,
-    CreateSchema which represents the input data for creating objects, and
-    UpdateSchema which represents the input data for updating objects.
+    Subclasses can extend this class to add domain-specific logic while
+    reusing standard CRUD behavior.
     """
 
     def __init__(self, crud: Crud, entity_name: Entity) -> None:

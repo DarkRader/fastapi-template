@@ -1,6 +1,5 @@
 """Package for API modules."""
 
-from api.dependencies import get_current_user
 from api.v1 import router as router_v1
 from api.well_known import router as router_well_known
 from core.application.docs import fastapi_docs
@@ -20,7 +19,6 @@ router.include_router(router_v1)
 __all__ = [
     "APIRouter",
     "fastapi_docs",
-    "get_current_user",
     "router_v1",
     "router_well_known",
 ]
