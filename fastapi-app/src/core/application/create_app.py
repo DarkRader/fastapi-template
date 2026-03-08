@@ -6,7 +6,6 @@ from contextlib import asynccontextmanager
 
 from core.config import settings
 from fastapi import FastAPI
-from fastapi.responses import ORJSONResponse
 from infrastructure.db import db_session
 from starlette.middleware.cors import CORSMiddleware
 
@@ -52,7 +51,6 @@ def create_app() -> FastAPI:
         version=fastapi_docs.VERSION,
         openapi_tags=fastapi_docs.get_tags_metadata(),
         lifespan=startup_event,
-        default_response_class=ORJSONResponse,
     )
 
     app.include_router(router)
