@@ -24,4 +24,4 @@ def get_openid_provider() -> OpenIdProvider:
     return OpenIdProvider()
 
 
-OpenIdProvider = Annotated[OpenIdProvider, Depends(get_openid_provider)]
+OpenIdProviderDep = Annotated[OpenIdProvider, Depends(get_openid_provider)]

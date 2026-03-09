@@ -5,7 +5,7 @@ from typing import Annotated
 
 from core import settings
 from core.application.exceptions import ERROR_RESPONSES
-from core.dependencies.adapters import OpenIdProvider
+from core.dependencies.adapters import OpenIdProviderDep
 from core.dependencies.services import UserServiceDep
 from fastapi import APIRouter, Body, Depends, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, OAuth2AuthorizationCodeBearer
@@ -47,7 +47,7 @@ async def get_token(token: Annotated[str, Depends(oauth2_scheme)]) -> dict:
 )
 async def login(
     user_service: UserServiceDep,
-    openid_service: OpenIdProvider,
+    openid_service: OpenIdProviderDep,
     token: Annotated[HTTPAuthorizationCredentials, Depends(http_bearer)],
 ) -> UserDetail:
     """Authenticate a user."""
@@ -65,7 +65,7 @@ async def login(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def logout(
-    openid_service: OpenIdProvider,
+    openid_service: OpenIdProviderDep,
     refresh_token: Annotated[str, Body()],
 ) -> None:
     """Clean session of the current user."""
