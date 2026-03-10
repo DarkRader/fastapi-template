@@ -8,7 +8,7 @@ from core.application.exceptions import (
 from core.dependencies.api import CurrentUserDep
 from core.dependencies.services import UserServiceDep
 from fastapi import APIRouter, status
-from schemas import UserDetail, UserLite
+from schemas import Pagination, UserDetail, UserLite
 
 logger = logging.getLogger(__name__)
 
@@ -20,10 +20,14 @@ router = APIRouter()
     responses=ERROR_RESPONSES["401_403"],
     status_code=status.HTTP_200_OK,
 )
-async def get_all(
+async def get_list(
     service: UserServiceDep,
     user: CurrentUserDep,
-) -> list[UserLite]:
+    skip: int = 0,
+    limit: int = 10,
+    *,
+    include_removed: bool = False,
+) -> Pagination[UserLite]:
     """
     Retrieve all users from the database.
 
@@ -32,9 +36,9 @@ async def get_all(
     """
     logger.info("User %s requested list of all users.", user.username)
 
-    users = await service.get_all()
+    users = await service.get_list(skip, limit, include_removed=include_removed)
 
-    logger.info("Returned %d users for section head %s.", len(users), user.username)
+    logger.info("Returned %d users for section head %s.", users, user.username)
     return users
 
 

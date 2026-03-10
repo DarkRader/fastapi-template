@@ -12,7 +12,7 @@ from typing import Any, TypeVar
 from core.ports.repositories.base import CRUDBase
 from models.base_class import Base
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 Model = TypeVar("Model", bound=Base)
@@ -43,8 +43,16 @@ class SQLAlchemyCRUDBase(CRUDBase[Model, CreateSchema, UpdateSchema]):
         result = await self.db.execute(stmt)
         return result.scalar_one_or_none()
 
-    async def get_multi(self, skip: int = 0, limit: int = 100) -> list[Model]:
-        stmt = select(self.model).order_by(self.model.id.desc()).offset(skip).limit(limit)
+    async def get_list(
+        self, skip: int = 0, limit: int = 10, *, include_removed: bool = False
+    ) -> list[Model]:
+        stmt = (
+            select(self.model)
+            .execution_options(include_deleted=include_removed)
+            .order_by(self.model.id.desc())
+            .offset(skip)
+            .limit(limit)
+        )
         result = await self.db.execute(stmt)
         return list(result.scalars().all())
 
@@ -104,6 +112,21 @@ class SQLAlchemyCRUDBase(CRUDBase[Model, CreateSchema, UpdateSchema]):
             select(self.model)
             .execution_options(include_deleted=True)
             .filter(self.model.id == obj.id)
+        )
+        result = await self.db.execute(stmt)
+        return result.scalar_one()
+
+    async def count(self, *, include_removed: bool = False) -> int:
+        """
+        Count the total number of records in the table.
+
+        :param include_removed: whether to include soft-deleted records
+        :return: total count as integer
+        """
+        stmt = (
+            select(func.count())
+            .select_from(self.model)
+            .execution_options(include_deleted=include_removed)
         )
         result = await self.db.execute(stmt)
         return result.scalar_one()

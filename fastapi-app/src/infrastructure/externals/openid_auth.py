@@ -1,4 +1,4 @@
-"""Defines the service for working with the Keycloak authorization."""
+"""Defines the service for working with the OpenID authorization."""
 
 import logging
 from typing import Any

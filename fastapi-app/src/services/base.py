@@ -14,6 +14,7 @@ from typing import TypeVar
 from core.application.exceptions import BaseAppError, Entity, EntityNotFoundError
 from core.ports.repositories import CRUDBase
 from pydantic import BaseModel
+from schemas import Pagination, UserLite
 
 SchemaLite = TypeVar("SchemaLite", bound=BaseModel)
 SchemaDetail = TypeVar("SchemaDetail", bound=BaseModel)
@@ -55,6 +56,20 @@ class AbstractCRUDService[
         :param include_removed: include removed object or not.
 
         :returns T: the retrieved object.
+        """
+
+    @abstractmethod
+    async def get_list(
+        self, skip: int = 0, limit: int = 10, *, include_removed: bool = False
+    ) -> Pagination[UserLite]:
+        """
+        Retrieve a paginated list of objects from the database.
+
+        :param skip: Number of records to skip (offset).
+        :param limit: Maximum number of records to return.
+        :param include_removed: include removed object or not.
+
+        :returns: A list of objects for the requested page.
         """
 
     @abstractmethod
@@ -143,6 +158,23 @@ class CrudServiceBase(
         if obj is None:
             raise EntityNotFoundError(self.entity_name, id_)
         return obj
+
+    async def get_list(
+        self, skip: int = 0, limit: int = 10, *, include_removed: bool = False
+    ) -> Pagination[UserLite]:
+        items = await self.crud.get_list(skip=skip, limit=limit, include_removed=include_removed)
+        total = await self.crud.count(include_removed=include_removed)
+        has_previous = skip > 0
+        has_next = skip + limit < total
+        items_pydantic = [UserLite.model_validate(item) for item in items]
+        return Pagination(
+            items=items_pydantic,
+            skip=skip,
+            limit=limit,
+            total=total,
+            has_previous=has_previous,
+            has_next=has_next,
+        )
 
     async def get_all(self, *, include_removed: bool = False) -> list[SchemaLite]:
         return await self.crud.get_all(include_removed=include_removed)

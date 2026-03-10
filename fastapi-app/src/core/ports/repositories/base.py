@@ -34,8 +34,20 @@ class CRUDBase[Model, CreateSchema, UpdateSchema](ABC):
         """
 
     @abstractmethod
-    async def get_multi(self, skip: int = 0, limit: int = 100) -> list[Model]:
-        """Retrieve a list of records with pagination."""
+    async def get_list(
+        self, skip: int = 0, limit: int = 10, *, include_removed: bool = False
+    ) -> list[Model]:
+        """
+        Retrieve a paginated list of objects from the database.
+
+        Optionally including soft-deleted records.
+
+        :param skip: Number of records to skip (offset).
+        :param limit: Maximum number of records to return.
+        :param include_removed: Whether to include soft-deleted records.
+
+        :returns: List of Model instances.
+        """
 
     @abstractmethod
     async def get_all(self, *, include_removed: bool = False) -> list[Model]:
@@ -76,4 +88,13 @@ class CRUDBase[Model, CreateSchema, UpdateSchema](ABC):
         Soft remove a record by its id_.
 
         Change attribute deleted_at to time of deletion
+        """
+
+    @abstractmethod
+    async def count(self, *, include_removed: bool = False) -> int:
+        """
+        Count the total number of records in the table.
+
+        :param include_removed: whether to include soft-deleted records
+        :return: total count as integer
         """
