@@ -38,7 +38,7 @@ async def get_list(
 
     users = await service.get_list(skip, limit, include_removed=include_removed)
 
-    logger.info("Returned %d users for section head %s.", users, user.username)
+    logger.info("Returned users list for user %s.", user.username)
     return users
 
 
@@ -48,7 +48,7 @@ async def get_list(
     status_code=status.HTTP_200_OK,
 )
 async def get_me(
-    user: UserServiceDep,
+    user: CurrentUserDep,
 ) -> UserDetail:
     """Get currently authenticated user."""
     logger.debug("Returning profile for user %s.", user.username)
