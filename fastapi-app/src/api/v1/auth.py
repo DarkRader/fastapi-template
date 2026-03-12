@@ -9,7 +9,7 @@ from core.dependencies.adapters import OpenIdProviderDep
 from core.dependencies.services import UserServiceDep
 from fastapi import APIRouter, Body, Depends, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, OAuth2AuthorizationCodeBearer
-from schemas import UserDetail
+from schemas import User
 
 log = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ async def login(
     user_service: UserServiceDep,
     openid_service: OpenIdProviderDep,
     token: Annotated[HTTPAuthorizationCredentials, Depends(http_bearer)],
-) -> UserDetail:
+) -> User:
     """Authenticate a user."""
     log.info("Login attempt started with bearer token.")
     user_info = await openid_service.get_user_info(token)

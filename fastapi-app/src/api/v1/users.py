@@ -8,7 +8,7 @@ from core.application.exceptions import (
 from core.dependencies.api import CurrentUserDep
 from core.dependencies.services import UserServiceDep
 from fastapi import APIRouter, status
-from schemas import Pagination, UserDetail, UserLite
+from schemas import Pagination, User
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ async def get_list(
     limit: int = 10,
     *,
     include_removed: bool = False,
-) -> Pagination[UserLite]:
+) -> Pagination[User]:
     """
     Retrieve all users from the database.
 
@@ -49,7 +49,7 @@ async def get_list(
 )
 async def get_me(
     user: CurrentUserDep,
-) -> UserDetail:
+) -> User:
     """Get currently authenticated user."""
     logger.debug("Returning profile for user %s.", user.username)
     return user

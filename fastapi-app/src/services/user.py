@@ -11,10 +11,9 @@ from core.application.exceptions import Entity, EntityNotFoundError
 from core.dependencies.adapters import UserRepositoryDep
 from core.ports.repositories import UserRepository
 from schemas import (
+    User,
     UserCreate,
-    UserDetail,
     UserInfo,
-    UserLite,
     UserUpdate,
 )
 from services import CrudServiceBase
@@ -24,8 +23,7 @@ logger = logging.getLogger(__name__)
 
 class AbstractUserService(
     CrudServiceBase[
-        UserLite,
-        UserDetail,
+        User,
         UserRepository,
         UserCreate,
         UserUpdate,
@@ -42,7 +40,7 @@ class AbstractUserService(
     async def create_user(
         self,
         user_info: UserInfo,
-    ) -> UserLite:
+    ) -> User:
         """
         Create a User in the database.
 
@@ -50,7 +48,7 @@ class AbstractUserService(
         """
 
     @abstractmethod
-    async def get_by_username(self, username: str) -> UserLite:
+    async def get_by_username(self, username: str) -> User:
         """
         Retrieve a User instance by its username.
 
@@ -72,7 +70,7 @@ class UserService(AbstractUserService):
     async def create_user(
         self,
         user_info: UserInfo,
-    ) -> UserDetail:
+    ) -> User:
         try:
             user = await self.get(user_info.sub)
         except EntityNotFoundError:
@@ -90,5 +88,5 @@ class UserService(AbstractUserService):
             return await self.crud.create(user_create)
         return user
 
-    async def get_by_username(self, username: str) -> UserDetail:
+    async def get_by_username(self, username: str) -> User:
         return await self.crud.get_by_username(username)

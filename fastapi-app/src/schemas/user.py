@@ -28,7 +28,7 @@ class UserUpdate(BaseModel):
     email: EmailStr | None = None
 
 
-class UserLite(UserBase):
+class User(UserBase):
     """Base model for user in database."""
 
     deleted_at: datetime | None = None
@@ -38,7 +38,3 @@ class UserLite(UserBase):
     @computed_field
     def full_name(self) -> str:
         return f"{self.first_name} {self.second_name}"
-
-
-class UserDetail(UserLite):
-    """Extended API response schema with events."""

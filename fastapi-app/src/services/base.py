@@ -14,18 +14,16 @@ from typing import TypeVar
 from core.application.exceptions import BaseAppError, Entity, EntityNotFoundError
 from core.ports.repositories import CRUDBase
 from pydantic import BaseModel
-from schemas import Pagination, UserLite
+from schemas import Pagination
 
-SchemaLite = TypeVar("SchemaLite", bound=BaseModel)
-SchemaDetail = TypeVar("SchemaDetail", bound=BaseModel)
+Schema = TypeVar("Schema", bound=BaseModel)
 Crud = TypeVar("Crud", bound=CRUDBase)
 CreateSchema = TypeVar("CreateSchema", bound=BaseModel)
 UpdateSchema = TypeVar("UpdateSchema", bound=BaseModel)
 
 
 class AbstractCRUDService[
-    SchemaLite: BaseModel,
-    SchemaDetail: BaseModel,
+    Schema: BaseModel,
     Crud: CRUDBase,
     CreateSchema: BaseModel,
     UpdateSchema: BaseModel,
@@ -45,7 +43,7 @@ class AbstractCRUDService[
         id_: str,
         *,
         include_removed: bool = False,
-    ) -> SchemaDetail:
+    ) -> Schema:
         """
         Retrieve an object from the database.
 
@@ -61,7 +59,7 @@ class AbstractCRUDService[
     @abstractmethod
     async def get_list(
         self, skip: int = 0, limit: int = 10, *, include_removed: bool = False
-    ) -> Pagination[UserLite]:
+    ) -> Pagination[Schema]:
         """
         Retrieve a paginated list of objects from the database.
 
@@ -73,7 +71,7 @@ class AbstractCRUDService[
         """
 
     @abstractmethod
-    async def get_all(self, *, include_removed: bool = False) -> list[SchemaLite]:
+    async def get_all(self, *, include_removed: bool = False) -> list[Schema]:
         """
         Retrieve all objects from the database.
 
@@ -86,7 +84,7 @@ class AbstractCRUDService[
         """
 
     @abstractmethod
-    async def create(self, obj_in: CreateSchema) -> SchemaDetail:
+    async def create(self, obj_in: CreateSchema) -> Schema:
         """
         Create an object in the database.
 
@@ -100,7 +98,7 @@ class AbstractCRUDService[
         self,
         id_: str,
         obj_in: UpdateSchema,
-    ) -> SchemaDetail:
+    ) -> Schema:
         """
         Update an object in the database.
 
@@ -111,7 +109,7 @@ class AbstractCRUDService[
         """
 
     @abstractmethod
-    async def restore(self, id_: str) -> SchemaDetail:
+    async def restore(self, id_: str) -> Schema:
         """
         Restore a previously soft-removed object by its ID.
 
@@ -121,7 +119,7 @@ class AbstractCRUDService[
         """
 
     @abstractmethod
-    async def delete(self, id_: str, *, hard_remove: bool = False) -> SchemaDetail:
+    async def delete(self, id_: str, *, hard_remove: bool = False) -> Schema:
         """
         Delete an object from the database.
 
@@ -130,9 +128,7 @@ class AbstractCRUDService[
         """
 
 
-class CrudServiceBase(
-    AbstractCRUDService[SchemaLite, SchemaDetail, Crud, CreateSchema, UpdateSchema]
-):
+class CrudServiceBase(AbstractCRUDService[Schema, Crud, CreateSchema, UpdateSchema]):
     """
     Generic base service implementing CRUD operations.
 
@@ -153,7 +149,7 @@ class CrudServiceBase(
         id_: str,
         *,
         include_removed: bool = False,
-    ) -> SchemaDetail:
+    ) -> Schema:
         obj = await self.crud.get(id_, include_removed=include_removed)
         if obj is None:
             raise EntityNotFoundError(self.entity_name, id_)
@@ -161,38 +157,35 @@ class CrudServiceBase(
 
     async def get_list(
         self, skip: int = 0, limit: int = 10, *, include_removed: bool = False
-    ) -> Pagination[UserLite]:
+    ) -> Pagination[Schema]:
         items = await self.crud.get_list(skip=skip, limit=limit, include_removed=include_removed)
         total = await self.crud.count(include_removed=include_removed)
-        has_previous = skip > 0
-        has_next = skip + limit < total
-        items_pydantic = [UserLite.model_validate(item) for item in items]
-        return Pagination(
-            items=items_pydantic,
-            skip=skip,
-            limit=limit,
-            total=total,
-            has_previous=has_previous,
-            has_next=has_next,
-        )
+        return {
+            "items": items,
+            "skip": skip,
+            "limit": limit,
+            "total": total,
+            "has_previous": skip > 0,
+            "has_next": skip + limit < total,
+        }
 
-    async def get_all(self, *, include_removed: bool = False) -> list[SchemaLite]:
+    async def get_all(self, *, include_removed: bool = False) -> list[Schema]:
         return await self.crud.get_all(include_removed=include_removed)
 
-    async def create(self, obj_in: CreateSchema) -> SchemaDetail:
+    async def create(self, obj_in: CreateSchema) -> Schema:
         return await self.crud.create(obj_in)
 
     async def update(
         self,
         id_: str,
         obj_in: UpdateSchema,
-    ) -> SchemaDetail:
+    ) -> Schema:
         obj_to_update = await self.get(id_)
         if obj_to_update is None:
             raise EntityNotFoundError(self.entity_name, id_)
         return await self.crud.update(db_obj=obj_to_update, obj_in=obj_in)
 
-    async def restore(self, id_: str) -> SchemaDetail:
+    async def restore(self, id_: str) -> Schema:
         obj = await self.get(id_, include_removed=True)
         if obj.deleted_at is None:  # type: ignore[attr-defined]
             msg = f"A {self.entity_name.value} was not soft deleted."
@@ -201,7 +194,7 @@ class CrudServiceBase(
             raise EntityNotFoundError(self.entity_name, id_)
         return await self.crud.restore(obj)
 
-    async def delete(self, id_: str, *, hard_remove: bool = False) -> SchemaDetail:
+    async def delete(self, id_: str, *, hard_remove: bool = False) -> Schema:
         obj = await self.get(id_, include_removed=True)
         if hard_remove:
             return await self.crud.remove(id_)

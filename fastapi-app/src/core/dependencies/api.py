@@ -7,7 +7,7 @@ from core.dependencies.services import UserServiceDep
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from infrastructure.externals.openid_auth import OpenIdProvider
-from schemas import UserDetail, UserLite
+from schemas import User
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ async def get_current_user(
     service: UserServiceDep,
     openid_service: Annotated[OpenIdProvider, Depends(OpenIdProvider)],
     token: Annotated[HTTPAuthorizationCredentials, Depends(http_bearer)],
-) -> UserDetail:
+) -> User:
     """Retrieve the current user based on a JWT token."""
     logger.debug("Retrieving current user from token.")
     user_info = await openid_service.get_user_info(token)
@@ -26,4 +26,4 @@ async def get_current_user(
     return await service.get(user_info.sub)
 
 
-CurrentUserDep = Annotated[UserLite, Depends(get_current_user)]
+CurrentUserDep = Annotated[User, Depends(get_current_user)]
