@@ -2,6 +2,8 @@
 
 from typing import ClassVar, TypedDict
 
+from core import settings
+
 
 class TagMeta(TypedDict):
     """Metadata structure for describing OpenAPI documentation tags."""
@@ -13,9 +15,9 @@ class TagMeta(TypedDict):
 class FastApiDocs:
     """Information for fastapi documentation."""
 
-    NAME = "API template of the FastAPI projects"
+    NAME = f"{settings.APP.NAME} of the {settings.APP.ORGANISATION}"
     DESCRIPTION = (
-        "This project serves as a FastAPI application template. "
+        "This project serves as a FastAPI application template. \n"
         "## API Conventions\n"
         "- `POST`\n\n"
         "  - Creates a record in collection\n\n"

@@ -13,6 +13,13 @@ LOG_DEFAULT_FORMAT = (
 )
 
 
+class AppConfig(BaseModel):
+    """Config for application."""
+
+    NAME: str = "Application Template"
+    ORGANISATION: str = "Your Organisation"
+
+
 class RunConfig(BaseModel):
     """Config for running application."""
 
@@ -123,8 +130,7 @@ class OpenIDConfig(BaseModel):
 class Settings(BaseSettings):
     """Settings class."""
 
-    APP_NAME: str = "Reservation System"
-
+    APP: AppConfig = AppConfig()
     RUN: RunConfig = RunConfig()
     LOGGING: LoggingConfig = LoggingConfig()
     DB: DatabaseConfig

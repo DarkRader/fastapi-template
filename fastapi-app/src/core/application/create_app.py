@@ -13,19 +13,17 @@ log = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def startup_event(fast_api_app: FastAPI) -> AsyncGenerator[None]:  # noqa: ARG001
+async def startup_event(_: FastAPI) -> AsyncGenerator[None]:
     """
     Startup and shutdown lifecycle event handler.
 
     This function is triggered when the FastAPI app starts and stops.
     It logs startup and shutdown messages.
-
-    :param fast_api_app: The FastAPI application instance.
     """
-    log.info("Starting %s.", settings.APP_NAME)
+    log.info("Starting %s.", settings.APP.NAME)
     yield
     await db_session.dispose()
-    log.info("Shutting down %s.", settings.APP_NAME)
+    log.info("Shutting down %s.", settings.APP.NAME)
 
 
 def create_app() -> FastAPI:
