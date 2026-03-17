@@ -4,7 +4,7 @@ from typing import Annotated
 
 from core.dependencies.adapters import UserRepositoryDep
 from fastapi import Depends
-from services import UserService
+from services.user import UserService
 
 
 def get_user_service(

@@ -44,7 +44,7 @@ class AbstractUserService(
         """
         Create a User in the database.
 
-        :return: the created UserLite.
+        :return: the created User.
         """
 
     @abstractmethod
@@ -54,12 +54,12 @@ class AbstractUserService(
 
         :param username: The username of the UserLite.
 
-        :return: The UserLite instance if found, None otherwise.
+        :return: The User instance if found, None otherwise.
         """
 
 
 class UserService(AbstractUserService):
-    """Class UserService represent service that work with UserLite."""
+    """Class UserService represent service that work with User."""
 
     def __init__(
         self,

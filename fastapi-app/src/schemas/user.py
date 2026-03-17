@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, computed_field
 
 
 class UserBase(BaseModel):
-    """Shared properties of UserLite."""
+    """Shared properties of UserBase."""
 
     id: str
     username: str

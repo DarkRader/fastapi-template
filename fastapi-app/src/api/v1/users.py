@@ -31,8 +31,7 @@ async def get_list(
     """
     Retrieve all users from the database.
 
-    This endpoint is accessible only to users with the 'section_head' role.
-    It returns a list of all registered users.
+    It returns a list of registered users.
     """
     logger.info("User %s requested list of all users.", user.username)
 
