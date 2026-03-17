@@ -31,6 +31,8 @@ class UserUpdate(BaseModel):
 class User(UserBase):
     """Base model for user in database."""
 
+    created_at: datetime
+    updated_at: datetime | None = None
     deleted_at: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)

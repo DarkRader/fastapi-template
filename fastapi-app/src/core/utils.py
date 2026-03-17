@@ -1,5 +1,12 @@
 """Utils for core module."""
 
+from datetime import UTC, datetime
+
+
+def get_utc_now() -> datetime:
+    """Get the current UTC time."""
+    return datetime.now(UTC)
+
 
 def get_env_file_path(env_file_names: list[str]) -> list[str]:
     """
