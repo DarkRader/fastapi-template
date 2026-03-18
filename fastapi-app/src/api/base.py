@@ -7,6 +7,7 @@ from typing import Annotated, TypeVar
 from core.application.exceptions import ERROR_RESPONSES, BaseAppError, Entity
 from fastapi import APIRouter, Depends, Path, Query, status
 from pydantic import BaseModel
+from schemas import Pagination
 from services.base import CrudServiceBase
 
 logger = logging.getLogger(__name__)
@@ -109,19 +110,23 @@ class BaseCRUDRouter[
             response_model=list[schema],
             status_code=status.HTTP_200_OK,
         )
-        async def get_all(
-            service: Annotated[service_dep, Depends(service_dep)],
+        async def get_list(
+            service: Annotated[TService, Depends(service_dep)],
             *,
-            include_removed: bool = Query(
-                default=False, description="Include `removed objects` or not."
-            ),
-        ) -> list[TRead]:
+            skip: Annotated[
+                int, Query(ge=0, description="Number of records to skip (offset).")
+            ] = 0,
+            limit: Annotated[
+                int, Query(ge=1, le=100, description="Maximum number of records to return.")
+            ] = 10,
+            include_removed: Annotated[bool, Query(description="Include removed objects.")] = False,
+        ) -> Pagination[TRead]:
             """Get all objects."""
             logger.info(
-                "Fetching all %s (include_removed=%s)", self.entity_name.value, include_removed
+                "Fetching list of %s (include_removed=%s)", self.entity_name.value, include_removed
             )
-            result = await service.get_all(include_removed)
-            logger.debug("Fetched %d objects", len(result))
+            result = await service.get_list(skip, limit, include_removed=include_removed)
+            logger.debug("Fetched %d objects", len(result.items))
             return result
 
     def register_get_by_id(self) -> None:
@@ -136,12 +141,10 @@ class BaseCRUDRouter[
             status_code=status.HTTP_200_OK,
         )
         async def get_by_id(
-            service: Annotated[service_dep, Depends(service_dep)],
+            service: Annotated[TService, Depends(service_dep)],
             id_: Annotated[str | int, Path(alias="id", description="The ID of the object.")],
             *,
-            include_removed: bool = Query(
-                default=False, description="Include `removed object` or not."
-            ),
+            include_removed: Annotated[bool, Query(description="Include removed objects.")] = False,
         ) -> TRead:
             """Get object."""
             logger.info(
@@ -167,7 +170,7 @@ class BaseCRUDRouter[
             status_code=status.HTTP_201_CREATED,
         )
         async def create(
-            service: Annotated[service_dep, Depends(service_dep)],
+            service: Annotated[TService, Depends(service_dep)],
             obj_create: schema_create,
         ) -> TRead:
             """Create object, only users with special roles can create object."""
@@ -212,7 +215,7 @@ class BaseCRUDRouter[
             status_code=status.HTTP_200_OK,
         )
         async def update(
-            service: Annotated[service_dep, Depends(service_dep)],
+            service: Annotated[TService, Depends(service_dep)],
             id_: Annotated[str | int, Path(alias="id", description="The ID of the object.")],
             obj_update: schema_update,
         ) -> TRead:
@@ -233,7 +236,7 @@ class BaseCRUDRouter[
             status_code=status.HTTP_200_OK,
         )
         async def restore(
-            service: Annotated[service_dep, Depends(service_dep)],
+            service: Annotated[TService, Depends(service_dep)],
             id_: Annotated[str | int, Path(alias="id", description="The ID of the object.")],
         ) -> TRead:
             """Restore a soft-deleted object, only users with special roles can restore object."""
@@ -253,12 +256,12 @@ class BaseCRUDRouter[
             status_code=status.HTTP_200_OK,
         )
         async def delete(
-            service: Annotated[service_dep, Depends(service_dep)],
+            service: Annotated[TService, Depends(service_dep)],
             id_: Annotated[str | int, Path(alias="id", description="The ID of the object.")],
             *,
-            hard_remove: bool = Query(
-                default=False, description="`Hard remove` the object or not."
-            ),
+            hard_remove: Annotated[
+                bool, Query(description="`Hard remove` the object or not.")
+            ] = False,
         ) -> TRead:
             """Delete object, only users with special roles can delete object."""
             obj = await service.delete(id_, hard_remove)
