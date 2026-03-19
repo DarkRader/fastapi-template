@@ -2,6 +2,7 @@
 
 from typing import Annotated
 
+from core.ports.identity_provider import IdentityProvider
 from core.ports.repositories.user import UserRepository
 from fastapi import Depends
 from infrastructure.db import AsyncSessionDep
@@ -19,9 +20,9 @@ def get_user_repository(
 UserRepositoryDep = Annotated[UserRepository, Depends(get_user_repository)]
 
 
-def get_openid_provider() -> OpenIdProvider:
+def get_identity_provider() -> IdentityProvider:
     """Get User Service."""
     return OpenIdProvider()
 
 
-OpenIdProviderDep = Annotated[OpenIdProvider, Depends(get_openid_provider)]
+IdentityProviderDep = Annotated[IdentityProvider, Depends(get_identity_provider)]
