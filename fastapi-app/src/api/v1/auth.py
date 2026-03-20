@@ -7,9 +7,9 @@ from core import settings
 from core.application.exceptions import ERROR_RESPONSES
 from core.dependencies.adapters import IdentityProviderDep
 from core.dependencies.services import UserServiceDep
+from domain.schemas import User
 from fastapi import APIRouter, Body, Depends, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, OAuth2AuthorizationCodeBearer
-from schemas import User
 
 log = logging.getLogger(__name__)
 

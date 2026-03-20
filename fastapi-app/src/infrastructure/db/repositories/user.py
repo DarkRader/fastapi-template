@@ -7,9 +7,9 @@ depend on UserRepository, not this concrete class.
 """
 
 from core.ports.repositories.user import UserRepository
+from domain.models import UserModel
+from domain.schemas import UserCreate, UserUpdate
 from infrastructure.db.repositories.base import SQLAlchemyCRUDBase
-from models import UserModel
-from schemas import UserCreate, UserUpdate
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 

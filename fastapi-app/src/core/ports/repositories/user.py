@@ -11,8 +11,8 @@ interactions for UserModel while adhering to this interface.
 from abc import ABC, abstractmethod
 
 from core.ports.repositories.base import CRUDBase
-from models import UserModel
-from schemas import UserCreate, UserUpdate
+from domain.models import UserModel
+from domain.schemas import UserCreate, UserUpdate
 
 
 class UserRepository(CRUDBase[UserModel, UserCreate, UserUpdate], ABC):

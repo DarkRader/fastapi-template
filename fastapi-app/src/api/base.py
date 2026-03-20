@@ -5,9 +5,9 @@ from collections.abc import Callable
 from typing import Annotated, TypeVar
 
 from core.application.exceptions import ERROR_RESPONSES, BaseAppError, Entity
+from domain.schemas import Pagination
 from fastapi import APIRouter, Depends, Path, Query, status
 from pydantic import BaseModel
-from schemas import Pagination
 from services.base import CrudServiceBase
 
 logger = logging.getLogger(__name__)

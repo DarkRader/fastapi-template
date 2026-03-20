@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 from core.application.exceptions import Entity, EntityNotFoundError
 from core.dependencies.adapters import UserRepositoryDep
 from core.ports.repositories import UserRepository
-from schemas import (
+from domain.schemas import (
     User,
     UserCreate,
     UserInfo,

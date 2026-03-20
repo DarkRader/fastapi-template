@@ -8,8 +8,8 @@ from core.application.exceptions import (
 )
 from core.dependencies.api import CurrentUserDep
 from core.dependencies.services import UserServiceDep
+from domain.schemas import Pagination, User
 from fastapi import APIRouter, Query, status
-from schemas import Pagination, User
 
 logger = logging.getLogger(__name__)
 

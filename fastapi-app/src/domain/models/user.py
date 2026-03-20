@@ -1,9 +1,10 @@
 """User ORM model and its dependencies."""
 
-from models.base_class import Base
-from models.soft_delete_mixin import SoftDeleteMixin
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
+
+from models.base_class import Base
+from models.soft_delete_mixin import SoftDeleteMixin
 
 
 class User(Base, SoftDeleteMixin):

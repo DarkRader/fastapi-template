@@ -10,7 +10,7 @@ from datetime import UTC, datetime
 from typing import Any, TypeVar
 
 from core.ports.repositories.base import CRUDBase
-from models.base_class import Base
+from domain.models.base_class import Base
 from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession

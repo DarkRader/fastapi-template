@@ -8,7 +8,7 @@ this interface and handle actual database interactions.
 from abc import ABC, abstractmethod
 from typing import TypeVar
 
-from models.base_class import Base
+from domain.models.base_class import Base
 from pydantic import BaseModel
 
 Model = TypeVar("Model", bound=Base)

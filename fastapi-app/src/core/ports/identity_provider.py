@@ -3,8 +3,8 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
+from domain.schemas import UserInfo
 from fastapi.security import HTTPAuthorizationCredentials
-from schemas import UserInfo
 
 
 class IdentityProvider(ABC):
