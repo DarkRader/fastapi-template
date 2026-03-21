@@ -1,23 +1,27 @@
 """Module with SQLAlchemy base class used to create other models from this Base class."""
 
+import uuid
 from datetime import datetime
-from uuid import uuid4
+from uuid import uuid7
 
 from core import get_utc_now, settings
-from sqlalchemy import DateTime, MetaData, func
+from domain.models.soft_delete_mixin import SoftDeleteMixin
+from sqlalchemy import UUID, DateTime, MetaData, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
 
-class Base(DeclarativeBase):
+class Base(DeclarativeBase, SoftDeleteMixin):
     """Base class of all ORM mapped models."""
 
     __abstract__ = True
 
     metadata = MetaData(naming_convention=settings.DB.NAMING_CONVENTION)
 
-    id: Mapped[str] = mapped_column(
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
         primary_key=True,
-        default=lambda: uuid4().hex,
+        default=uuid7,
+        server_default=func.gen_random_uuid(),
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

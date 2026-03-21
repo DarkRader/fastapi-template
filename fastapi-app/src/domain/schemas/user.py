@@ -2,13 +2,13 @@
 
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, EmailStr, computed_field
+from pydantic import UUID7, BaseModel, ConfigDict, EmailStr, computed_field
 
 
 class UserBase(BaseModel):
     """Shared properties of UserBase."""
 
-    id: str
+    provider_id: str
     username: str
     first_name: str
     second_name: str
@@ -30,6 +30,8 @@ class UserUpdate(BaseModel):
 
 class User(UserBase):
     """Base model for user in database."""
+
+    id: UUID7
 
     created_at: datetime
     updated_at: datetime | None = None

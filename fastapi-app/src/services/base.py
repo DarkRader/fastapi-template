@@ -13,8 +13,8 @@ from typing import TypeVar
 
 from core.application.exceptions import BaseAppError, Entity, EntityNotFoundError
 from core.ports.repositories import CRUDBase
-from pydantic import BaseModel
-from schemas import Pagination
+from domain.schemas import Pagination
+from pydantic import UUID7, BaseModel
 
 Schema = TypeVar("Schema", bound=BaseModel)
 Crud = TypeVar("Crud", bound=CRUDBase)
@@ -40,7 +40,7 @@ class AbstractCRUDService[
     @abstractmethod
     async def get(
         self,
-        id_: str,
+        id_: UUID7,
         *,
         include_removed: bool = False,
     ) -> Schema:
@@ -96,7 +96,7 @@ class AbstractCRUDService[
     @abstractmethod
     async def update(
         self,
-        id_: str,
+        id_: UUID7,
         obj_in: UpdateSchema,
     ) -> Schema:
         """
@@ -109,7 +109,7 @@ class AbstractCRUDService[
         """
 
     @abstractmethod
-    async def restore(self, id_: str) -> Schema:
+    async def restore(self, id_: UUID7) -> Schema:
         """
         Restore a previously soft-removed object by its ID.
 
@@ -119,7 +119,7 @@ class AbstractCRUDService[
         """
 
     @abstractmethod
-    async def delete(self, id_: str, *, hard_remove: bool = False) -> Schema:
+    async def delete(self, id_: UUID7, *, hard_remove: bool = False) -> Schema:
         """
         Delete an object from the database.
 
@@ -146,7 +146,7 @@ class CrudServiceBase(AbstractCRUDService[Schema, Crud, CreateSchema, UpdateSche
 
     async def get(
         self,
-        id_: str,
+        id_: UUID7,
         *,
         include_removed: bool = False,
     ) -> Schema:
@@ -177,7 +177,7 @@ class CrudServiceBase(AbstractCRUDService[Schema, Crud, CreateSchema, UpdateSche
 
     async def update(
         self,
-        id_: str,
+        id_: UUID7,
         obj_in: UpdateSchema,
     ) -> Schema:
         obj_to_update = await self.get(id_)
@@ -185,7 +185,7 @@ class CrudServiceBase(AbstractCRUDService[Schema, Crud, CreateSchema, UpdateSche
             raise EntityNotFoundError(self.entity_name, id_)
         return await self.crud.update(db_obj=obj_to_update, obj_in=obj_in)
 
-    async def restore(self, id_: str) -> Schema:
+    async def restore(self, id_: UUID7) -> Schema:
         obj = await self.get(id_, include_removed=True)
         if obj.deleted_at is None:  # type: ignore[attr-defined]
             msg = f"A {self.entity_name.value} was not soft deleted."
@@ -194,7 +194,7 @@ class CrudServiceBase(AbstractCRUDService[Schema, Crud, CreateSchema, UpdateSche
             raise EntityNotFoundError(self.entity_name, id_)
         return await self.crud.restore(obj)
 
-    async def delete(self, id_: str, *, hard_remove: bool = False) -> Schema:
+    async def delete(self, id_: UUID7, *, hard_remove: bool = False) -> Schema:
         obj = await self.get(id_, include_removed=True)
         if hard_remove:
             return await self.crud.remove(id_)

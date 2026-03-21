@@ -23,7 +23,7 @@ async def get_current_user(
     logger.debug("Retrieving current user from token.")
     user_info = await openid_service.get_user_info(token)
 
-    return await service.get(user_info.sub)
+    return await service.get_by_username(user_info.preferred_username)
 
 
 CurrentUserDep = Annotated[User, Depends(get_current_user)]

@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 from typing import TypeVar
 
 from domain.models.base_class import Base
-from pydantic import BaseModel
+from pydantic import UUID7, BaseModel
 
 Model = TypeVar("Model", bound=Base)
 CreateSchema = TypeVar("CreateSchema", bound=BaseModel)
@@ -22,7 +22,7 @@ class CRUDBase[Model, CreateSchema, UpdateSchema](ABC):
     @abstractmethod
     async def get(
         self,
-        id_: str,
+        id_: UUID7,
         *,
         include_removed: bool = False,
     ) -> Model | None:
@@ -68,7 +68,7 @@ class CRUDBase[Model, CreateSchema, UpdateSchema](ABC):
         *,
         db_obj: Model,
         obj_in: UpdateSchema,
-    ) -> Model | None:
+    ) -> Model:
         """Update an existing record with the input scheme."""
 
     @abstractmethod
@@ -79,7 +79,7 @@ class CRUDBase[Model, CreateSchema, UpdateSchema](ABC):
         """Retrieve removed object from soft removed."""
 
     @abstractmethod
-    async def remove(self, id_: str | int) -> Model:
+    async def remove(self, id_: UUID7 | int) -> Model:
         """Remove a record by its id_."""
 
     @abstractmethod

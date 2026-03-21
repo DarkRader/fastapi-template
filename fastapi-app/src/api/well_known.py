@@ -1,7 +1,7 @@
 """API controllers for well known."""
 
+from domain.schemas import WellKnownResponse
 from fastapi import APIRouter, status
-from schemas import WellKnownResponse
 
 router = APIRouter()
 

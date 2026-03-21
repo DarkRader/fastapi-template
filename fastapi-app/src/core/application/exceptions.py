@@ -6,7 +6,7 @@ from typing import Any, NoReturn
 
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from pydantic import UUID7, BaseModel
 from sqlalchemy.exc import IntegrityError
 
 
@@ -118,7 +118,7 @@ class EntityNotFoundError(BaseAppError):
     def __init__(
         self,
         entity: Entity,
-        entity_id: str | int,
+        entity_id: UUID7 | str | int,
         message: str | None = None,
         **kwargs: object,
     ) -> None:

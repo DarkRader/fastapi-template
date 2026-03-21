@@ -72,14 +72,14 @@ class UserService(AbstractUserService):
         user_info: UserInfo,
     ) -> User:
         try:
-            user = await self.get(user_info.sub)
+            user = await self.get_by_username(user_info.preferred_username)
         except EntityNotFoundError:
             user = None
             logger.info("User with sub %s not found, creating in db.", user_info.sub)
 
         if not user:
             user_create = UserCreate(
-                id=user_info.sub,
+                provider_id=user_info.sub,
                 username=user_info.preferred_username,
                 first_name=user_info.given_name,
                 second_name=user_info.family_name,

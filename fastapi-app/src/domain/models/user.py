@@ -1,15 +1,14 @@
 """User ORM model and its dependencies."""
 
+from domain.models.base_class import Base
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from models.base_class import Base
-from models.soft_delete_mixin import SoftDeleteMixin
 
-
-class User(Base, SoftDeleteMixin):
+class User(Base):
     """User model to create and manipulate user entity in the database."""
 
+    provider_id: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     first_name: Mapped[str] = mapped_column(String(50), nullable=False)
     second_name: Mapped[str] = mapped_column(String(50), nullable=False)

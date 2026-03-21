@@ -18,7 +18,7 @@ load_dotenv(dotenv_path="../.env")
 
 # ruff: noqa: E402
 from core import settings
-from models.base_class import Base
+from domain.models.base_class import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

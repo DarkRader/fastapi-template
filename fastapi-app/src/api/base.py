@@ -7,7 +7,7 @@ from typing import Annotated, TypeVar
 from core.application.exceptions import ERROR_RESPONSES, BaseAppError, Entity
 from domain.schemas import Pagination
 from fastapi import APIRouter, Depends, Path, Query, status
-from pydantic import BaseModel
+from pydantic import UUID7, BaseModel
 from services.base import CrudServiceBase
 
 logger = logging.getLogger(__name__)
@@ -142,7 +142,7 @@ class BaseCRUDRouter[
         )
         async def get_by_id(
             service: Annotated[TService, Depends(service_dep)],
-            id_: Annotated[str, Path(alias="id", description="The ID of the object.")],
+            id_: Annotated[UUID7, Path(alias="id", description="The ID of the object.")],
             *,
             include_removed: Annotated[bool, Query(description="Include removed objects.")] = False,
         ) -> TRead:
@@ -216,7 +216,7 @@ class BaseCRUDRouter[
         )
         async def update(
             service: Annotated[TService, Depends(service_dep)],
-            id_: Annotated[str, Path(alias="id", description="The ID of the object.")],
+            id_: Annotated[UUID7, Path(alias="id", description="The ID of the object.")],
             obj_update: schema_update,
         ) -> TRead:
             """Update object, only users with special roles can update object."""
@@ -237,7 +237,7 @@ class BaseCRUDRouter[
         )
         async def restore(
             service: Annotated[TService, Depends(service_dep)],
-            id_: Annotated[str, Path(alias="id", description="The ID of the object.")],
+            id_: Annotated[UUID7, Path(alias="id", description="The ID of the object.")],
         ) -> TRead:
             """Restore a soft-deleted object, only users with special roles can restore object."""
             obj = await service.restore(id_)
@@ -257,7 +257,7 @@ class BaseCRUDRouter[
         )
         async def delete(
             service: Annotated[TService, Depends(service_dep)],
-            id_: Annotated[str, Path(alias="id", description="The ID of the object.")],
+            id_: Annotated[UUID7, Path(alias="id", description="The ID of the object.")],
             *,
             hard_remove: Annotated[
                 bool, Query(description="`Hard remove` the object or not.")

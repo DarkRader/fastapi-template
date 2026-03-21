@@ -10,9 +10,9 @@ from authlib.jose import JsonWebToken
 from core import settings
 from core.application.exceptions import PermissionDeniedError, UnauthorizedError
 from core.ports.identity_provider import IdentityProvider
+from domain.schemas import UserInfo
 from fastapi import status
 from fastapi.security import HTTPAuthorizationCredentials
-from schemas import UserInfo
 
 log = logging.getLogger(__name__)
 
