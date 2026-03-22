@@ -7,9 +7,5 @@ module = "src.domain.models.soft_delete_mixin"
 ignore_errors = true
 
 [[tool.mypy.overrides]]
-module = "src.api.base"
-ignore_errors = true
-
-[[tool.mypy.overrides]]
 module = "requests"
 ignore_missing_imports = true

@@ -3,6 +3,7 @@
 import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+from typing import Any, cast
 
 from core.config import settings
 from fastapi import FastAPI
@@ -47,7 +48,7 @@ def create_app() -> FastAPI:
         title=fastapi_docs.NAME,
         description=fastapi_docs.DESCRIPTION,
         version=fastapi_docs.VERSION,
-        openapi_tags=fastapi_docs.get_tags_metadata(),
+        openapi_tags=cast("list[dict[str, Any]]", fastapi_docs.get_tags_metadata()),
         lifespan=startup_event,
     )
 

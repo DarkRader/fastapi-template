@@ -125,7 +125,11 @@ class OpenIdProvider(IdentityProvider):
                     msg = "Invalid or missing credentials for logout."
                     raise UnauthorizedError(msg)
                 if resp.status == status.HTTP_400_BAD_REQUEST:
-                    msg = f"Bad request during logout: {data['error_description']}"
+                    if isinstance(data, dict):
+                        error_desc = data.get("error_description", "Unknown error")
+                    else:
+                        error_desc = data
+                    msg = f"Bad request during logout: {error_desc}"
                     raise UnauthorizedError(msg)
                 if resp.status != status.HTTP_204_NO_CONTENT:
                     msg = "Unexpected error during logout"

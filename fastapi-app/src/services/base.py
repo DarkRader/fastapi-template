@@ -167,7 +167,7 @@ class CrudServiceBase(AbstractCRUDService[Schema, Crud, CreateSchema, UpdateSche
             "total": total,
             "has_previous": skip > 0,
             "has_next": skip + limit < total,
-        }
+        }  # type: ignore[reportReturnType]
 
     async def get_all(self, *, include_removed: bool = False) -> list[Schema]:
         return await self.crud.get_all(include_removed=include_removed)

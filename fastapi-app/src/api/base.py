@@ -102,12 +102,10 @@ class BaseCRUDRouter[
     # ---------- route registrations ----------
     def register_get_all(self) -> None:
         """Register the GET / endpoint to retrieve all entities."""
-        schema: type[TRead] = self.schema
         service_dep: Callable[..., TService] = self.service_dep
 
         @self.router.get(
             "/",
-            response_model=list[schema],
             status_code=status.HTTP_200_OK,
         )
         async def get_list(
@@ -131,12 +129,10 @@ class BaseCRUDRouter[
 
     def register_get_by_id(self) -> None:
         """Register the GET /{id} endpoint to retrieve an entity by its ID."""
-        schema: type[TRead] = self.schema
         service_dep: Callable[..., TService] = self.service_dep
 
         @self.router.get(
             "/{id}",
-            response_model=schema,
             responses=ERROR_RESPONSES["404"],
             status_code=status.HTTP_200_OK,
         )
@@ -159,19 +155,16 @@ class BaseCRUDRouter[
 
     def register_create(self) -> None:
         """Register the POST / endpoint to create a new entity."""
-        schema_create: type[TCreate] = self.schema_create
-        schema: type[TRead] = self.schema
         service_dep: Callable[..., TService] = self.service_dep
 
         @self.router.post(
             "/",
-            response_model=schema,
             responses=ERROR_RESPONSES["400_401_403_409"],
             status_code=status.HTTP_201_CREATED,
         )
         async def create(
             service: Annotated[TService, Depends(service_dep)],
-            obj_create: schema_create,
+            obj_create: TCreate,
         ) -> TRead:
             """Create object, only users with special roles can create object."""
             obj = await self._create_single_object(service, obj_create)
@@ -180,20 +173,17 @@ class BaseCRUDRouter[
 
     def register_create_multiple(self) -> None:
         """Register the POST / endpoint to create multiple entities."""
-        schema_create: type[TCreate] = self.schema_create
-        schema: type[TRead] = self.schema
         service_dep: Callable[..., TService] = self.service_dep
 
         @self.router.post(
             "/batch",
-            response_model=list[schema],
             responses=ERROR_RESPONSES["400_401_403_409"],
             status_code=status.HTTP_201_CREATED,
         )
         async def create_multiple(
             service: Annotated[TService, Depends(service_dep)],
-            objs_create: list[schema_create],
-        ) -> TRead:
+            objs_create: list[TCreate],
+        ) -> list[TRead]:
             """Create multiple objects in a single request."""
             objs_result = []
             for obj_create in objs_create:
@@ -204,20 +194,17 @@ class BaseCRUDRouter[
 
     def register_update(self) -> None:
         """Register the PUT /{id} endpoint to update an existing entity."""
-        schema_update: type[TUpdate] = self.schema_update
-        schema: type[TRead] = self.schema
         service_dep: Callable[..., TService] = self.service_dep
 
         @self.router.put(
             "/{id}",
-            response_model=schema,
             responses=ERROR_RESPONSES["400_401_403_404"],
             status_code=status.HTTP_200_OK,
         )
         async def update(
             service: Annotated[TService, Depends(service_dep)],
             id_: Annotated[UUID7, Path(alias="id", description="The ID of the object.")],
-            obj_update: schema_update,
+            obj_update: TUpdate,
         ) -> TRead:
             """Update object, only users with special roles can update object."""
             obj = await service.update(id_, obj_update)
@@ -226,12 +213,10 @@ class BaseCRUDRouter[
 
     def register_restore(self) -> None:
         """Register the PUT /{id}/restore endpoint to restore soft delete entity."""
-        schema: type[TRead] = self.schema
         service_dep: Callable[..., TService] = self.service_dep
 
         @self.router.put(
             "/{id}/restore",
-            response_model=schema,
             responses=ERROR_RESPONSES["400_401_403_404"],
             status_code=status.HTTP_200_OK,
         )
@@ -246,12 +231,10 @@ class BaseCRUDRouter[
 
     def register_delete(self) -> None:
         """Register the DELETE /{id} endpoint to delete an entity."""
-        schema: type[TRead] = self.schema
         service_dep: Callable[..., TService] = self.service_dep
 
         @self.router.delete(
             "/{id}",
-            response_model=schema,
             responses=ERROR_RESPONSES["400_401_403_404"],
             status_code=status.HTTP_200_OK,
         )
