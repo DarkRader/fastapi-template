@@ -1,8 +1,10 @@
 """Dependencies for api layer."""
 
 import logging
+from collections.abc import Awaitable, Callable
 from typing import Annotated
 
+from core.application.exceptions import UnauthorizedError
 from core.dependencies.services import UserServiceDep
 from domain.schemas import User
 from fastapi import Depends
@@ -27,3 +29,29 @@ async def get_current_user(
 
 
 CurrentUserDep = Annotated[User, Depends(get_current_user)]
+
+
+def require_permissions(*permissions: str) -> Callable[..., Awaitable[User]]:
+    """
+    Create a dependency that ensures the current user has at least one of the given permissions.
+
+    :param permissions: Allowed permissions for accessing the endpoint.
+    :return: FastAPI dependency callable.
+    """
+
+    async def permissions_checker(
+        user: CurrentUserDep,
+    ) -> User:
+        if not permissions:
+            return user
+
+        user_permissions = set(permissions)
+
+        if not user_permissions.intersection(user):  # fix what check
+            raise UnauthorizedError(
+                message=f"Requires one of permissions: {permissions}",
+            )
+
+        return user
+
+    return permissions_checker

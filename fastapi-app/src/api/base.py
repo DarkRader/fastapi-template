@@ -5,6 +5,7 @@ from collections.abc import Callable
 from typing import Annotated, TypeVar
 
 from core.application.exceptions import ERROR_RESPONSES, BaseAppError, Entity
+from core.dependencies.api import require_permissions
 from domain.schemas import Pagination
 from fastapi import APIRouter, Depends, Path, Query, status
 from pydantic import UUID7, BaseModel
@@ -65,13 +66,20 @@ class BaseCRUDRouter[
         enable_update: bool = True,
         enable_restore: bool = True,
         enable_delete: bool = True,
+        permissions_read: tuple[str, ...] = (),
+        permissions_create: tuple[str, ...] = (),
+        permissions_update: tuple[str, ...] = (),
+        permissions_delete: tuple[str, ...] = (),
+        permissions_restore: tuple[str, ...] = (),
     ) -> None:
         self.router = router
+        self.entity_name = entity_name
         self.service_dep = service_dep
+
+        # Schemas
         self.schema_create = schema_create
         self.schema_update = schema_update
         self.schema = schema
-        self.entity_name = entity_name
 
         # route toggles
         self.enable_create = enable_create
@@ -81,6 +89,13 @@ class BaseCRUDRouter[
         self.enable_update = enable_update
         self.enable_restore = enable_restore
         self.enable_delete = enable_delete
+
+        # Roles list
+        self.permissions_read = permissions_read
+        self.permissions_create = permissions_create
+        self.permissions_update = permissions_update
+        self.permissions_delete = permissions_delete
+        self.permissions_restore = permissions_restore
 
         self._ROUTES = [
             ("enable_read_all", self.register_get_all),
@@ -106,6 +121,7 @@ class BaseCRUDRouter[
 
         @self.router.get(
             "/",
+            dependencies=[Depends(require_permissions(*self.permissions_read))],
             status_code=status.HTTP_200_OK,
         )
         async def get_list(
@@ -133,6 +149,8 @@ class BaseCRUDRouter[
 
         @self.router.get(
             "/{id}",
+            response_model=self.schema,
+            dependencies=[Depends(require_permissions(*self.permissions_read))],
             responses=ERROR_RESPONSES["404"],
             status_code=status.HTTP_200_OK,
         )
@@ -159,6 +177,8 @@ class BaseCRUDRouter[
 
         @self.router.post(
             "/",
+            response_model=self.schema,
+            dependencies=[Depends(require_permissions(*self.permissions_create))],
             responses=ERROR_RESPONSES["400_401_403_409"],
             status_code=status.HTTP_201_CREATED,
         )
@@ -177,6 +197,7 @@ class BaseCRUDRouter[
 
         @self.router.post(
             "/batch",
+            dependencies=[Depends(require_permissions(*self.permissions_create))],
             responses=ERROR_RESPONSES["400_401_403_409"],
             status_code=status.HTTP_201_CREATED,
         )
@@ -198,6 +219,8 @@ class BaseCRUDRouter[
 
         @self.router.put(
             "/{id}",
+            response_model=self.schema,
+            dependencies=[Depends(require_permissions(*self.permissions_update))],
             responses=ERROR_RESPONSES["400_401_403_404"],
             status_code=status.HTTP_200_OK,
         )
@@ -217,6 +240,8 @@ class BaseCRUDRouter[
 
         @self.router.put(
             "/{id}/restore",
+            response_model=self.schema,
+            dependencies=[Depends(require_permissions(*self.permissions_restore))],
             responses=ERROR_RESPONSES["400_401_403_404"],
             status_code=status.HTTP_200_OK,
         )
@@ -235,6 +260,8 @@ class BaseCRUDRouter[
 
         @self.router.delete(
             "/{id}",
+            response_model=self.schema,
+            dependencies=[Depends(require_permissions(*self.permissions_delete))],
             responses=ERROR_RESPONSES["400_401_403_404"],
             status_code=status.HTTP_200_OK,
         )
