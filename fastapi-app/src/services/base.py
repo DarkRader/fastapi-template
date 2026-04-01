@@ -94,6 +94,16 @@ class AbstractCRUDService[
         """
 
     @abstractmethod
+    async def create_bulk(self, objs_in: list[CreateSchema]) -> list[Schema]:
+        """
+        Create multiple objects in the database.
+
+        :param objs_in: List of objects to create.
+
+        :returns List[T]: List of created objects.
+        """
+
+    @abstractmethod
     async def update(
         self,
         id_: UUID7,
@@ -174,6 +184,9 @@ class CrudServiceBase(AbstractCRUDService[Schema, Crud, CreateSchema, UpdateSche
 
     async def create(self, obj_in: CreateSchema) -> Schema:
         return await self.crud.create(obj_in)
+
+    async def create_bulk(self, objs_in: list[CreateSchema]) -> list[Schema]:
+        return await self.crud.create_bulk(objs_in)
 
     async def update(
         self,

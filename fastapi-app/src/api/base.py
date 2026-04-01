@@ -4,7 +4,7 @@ import logging
 from collections.abc import Callable
 from typing import Annotated, TypeVar
 
-from core.application.exceptions import ERROR_RESPONSES, BaseAppError, Entity
+from core.application.exceptions import ERROR_RESPONSES, Entity
 from core.dependencies.api import require_permissions
 from domain.schemas import Pagination
 from fastapi import APIRouter, Depends, Path, Query, status
@@ -187,7 +187,7 @@ class BaseCRUDRouter[
             obj_create: TCreate,
         ) -> TRead:
             """Create object, only users with special roles can create object."""
-            obj = await self._create_single_object(service, obj_create)
+            obj = await service.create(obj_create)
             logger.debug("Created %s: %s", self.entity_name.value, obj)
             return obj
 
@@ -206,11 +206,8 @@ class BaseCRUDRouter[
             objs_create: list[TCreate],
         ) -> list[TRead]:
             """Create multiple objects in a single request."""
-            objs_result = []
-            for obj_create in objs_create:
-                obj = await self._create_single_object(service, obj_create)
-                logger.debug("Created %s: %s", self.entity_name.value, obj)
-                objs_result.append(obj)
+            objs_result = await service.create_bulk(objs_create)
+            logger.debug("Created multiple %s: %s", self.entity_name.value, objs_result)
             return objs_result
 
     def register_update(self) -> None:
@@ -277,21 +274,3 @@ class BaseCRUDRouter[
             obj = await service.delete(id_, hard_remove=hard_remove)
             logger.debug("Deleted object: %s", obj)
             return obj
-
-    @staticmethod
-    async def _create_single_object(
-        service: TService,
-        obj_create: TCreate,
-    ) -> TRead:
-        """
-        Help creating a single object with permission checks.
-
-        :param service: Service providing business logic of this object.
-        :param obj_create: Data required to create the object.
-
-        :return: The created Object instance.
-        """
-        obj = await service.create(obj_create)
-        if not obj:
-            raise BaseAppError
-        return obj

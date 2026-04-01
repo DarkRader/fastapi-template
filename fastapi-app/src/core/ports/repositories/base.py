@@ -63,6 +63,15 @@ class CRUDBase[Model, CreateSchema, UpdateSchema](ABC):
         """Create a new record from the input scheme."""
 
     @abstractmethod
+    async def create_bulk(self, objs_in: list[CreateSchema]) -> list[Model]:
+        """
+        Create multiple objects in a single transaction.
+
+        :param objs_in: List of objects to create.
+        :return: List of created ORM objects.
+        """
+
+    @abstractmethod
     async def update(
         self,
         *,

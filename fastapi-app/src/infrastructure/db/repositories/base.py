@@ -69,6 +69,17 @@ class SQLAlchemyCRUDBase(CRUDBase[Model, CreateSchema, UpdateSchema]):
         await self.db.refresh(db_obj)
         return db_obj
 
+    async def create_bulk(self, objs_in: list[CreateSchema]) -> list[Model]:
+        if not objs_in:
+            return []
+
+        db_objs = [self.model(**obj_in.model_dump()) for obj_in in objs_in]
+
+        self.db.add_all(db_objs)
+        await self.db.flush()
+        await self.db.commit()
+        return db_objs
+
     async def update(
         self,
         *,
