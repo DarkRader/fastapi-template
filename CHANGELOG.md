@@ -1,5 +1,48 @@
 # Changelog
 
+## [0.1.1](https://github.com/DarkRader/fastapi-template/compare/v0.1.0...v0.1.1) (2026-04-01)
+
+
+### 🧱 Updates & Improvements
+
+* add create and updated at in base model, fix user schema ([d2e5518](https://github.com/DarkRader/fastapi-template/commit/d2e5518c3279b4a47adf50b3817393e508291219))
+* add create bulk operation to base repository, services and api ([be6bfc4](https://github.com/DarkRader/fastapi-template/commit/be6bfc4d197e9de3e26725949793697c08d4e437))
+* add fixed migration ([f83f325](https://github.com/DarkRader/fastapi-template/commit/f83f32502a4e693c4a1dc5a5dbca934f72b5cbb9))
+* add permissions dependencies at api crud base routers ([bfe2cf5](https://github.com/DarkRader/fastapi-template/commit/bfe2cf5a52253bba0ecbde18ebca19dd97aa8dbe))
+* add zed configs to .gitignore ([240e4c0](https://github.com/DarkRader/fastapi-template/commit/240e4c0a758aaaa5431d40a6d473a8367a991618))
+* apply migration for updated and created at columns in user ([e5556cc](https://github.com/DarkRader/fastapi-template/commit/e5556cc4c2cb7b323b8ed38ec312ba79dee305ce))
+* **build:** do cleaner separation envs in compose ([9368ad4](https://github.com/DarkRader/fastapi-template/commit/9368ad4b95cdc6c3b9e5a06afa59ece61b23eb22))
+* **deps:** update dependency pytest-env to v1.6.0 ([5e903df](https://github.com/DarkRader/fastapi-template/commit/5e903df012240aacdf09e5cb96dcf7b833e9f2f3))
+* **deps:** update dependency pytest-env to v1.6.0 ([#14](https://github.com/DarkRader/fastapi-template/issues/14)) ([efa39a1](https://github.com/DarkRader/fastapi-template/commit/efa39a157e1793e61ecc3791070d63ec145a0b04))
+* **deps:** update ghcr.io/astral-sh/uv docker tag to v0.10.10 ([8106dc5](https://github.com/DarkRader/fastapi-template/commit/8106dc54c3bd2b71442f3af3822c20f48115bd6d))
+* **deps:** update ghcr.io/astral-sh/uv docker tag to v0.10.10 ([#17](https://github.com/DarkRader/fastapi-template/issues/17)) ([54cde6e](https://github.com/DarkRader/fastapi-template/commit/54cde6eece86a485c901ecef5952ffe215fbefb9))
+* prepare ObjectList feature with proper pagination (not fully) ([8d5bb40](https://github.com/DarkRader/fastapi-template/commit/8d5bb40c2b31c3490f4b4131cea527f0fde12b10))
+* remove orjson (Deprecated) ([fd9e297](https://github.com/DarkRader/fastapi-template/commit/fd9e297ed102b9a416b5bd96c2e2aeb179baf40b))
+
+
+### 🛠️ Fixes
+
+* api base crud ([894cd1f](https://github.com/DarkRader/fastapi-template/commit/894cd1fa8fe8cc6d05d0cc70e69685f9deeed93a))
+* dependencies ([f754c8c](https://github.com/DarkRader/fastapi-template/commit/f754c8cb71121bdc8a46bafe4bf282da495ee310))
+* **deps:** update dependency pytz to v2026.1.post1 ([66f1a93](https://github.com/DarkRader/fastapi-template/commit/66f1a932e354e1bd7fcbab5237e3dd0ee0004e69))
+* **deps:** update dependency pytz to v2026.1.post1 ([#16](https://github.com/DarkRader/fastapi-template/issues/16)) ([4a80f8d](https://github.com/DarkRader/fastapi-template/commit/4a80f8d9413b85be1cc6837c66d532af07112d94))
+* generic SchemaLite in service base and user schema ([cb22ad6](https://github.com/DarkRader/fastapi-template/commit/cb22ad60034b2a45b151c14fcf03946220a594d0))
+* name object in db (plural) ([e87bec3](https://github.com/DarkRader/fastapi-template/commit/e87bec381fac5ab2bd30254fc96f94db3eca300d))
+* OpenIdProviderDep name ([9da88c9](https://github.com/DarkRader/fastapi-template/commit/9da88c99a35536d78a1ae7c376eb4f9d0ddb7f82))
+* solve basepyright warnings ([b0f4dcf](https://github.com/DarkRader/fastapi-template/commit/b0f4dcf712ca9cef74dfc544bccd57c115a361fd))
+
+
+### 🧹 Refactors
+
+* base and user routers (annotated style) ([1d36899](https://github.com/DarkRader/fastapi-template/commit/1d368998a3bf756b14e6446d155b2c2510a55af9))
+* base api builder, remove SchemaDetail, left only Schema ([65394cf](https://github.com/DarkRader/fastapi-template/commit/65394cf1a61b0bdbe4de0ba1c2806e74cbd44f20))
+* big refactor of ports/adapters pattern ([b45f872](https://github.com/DarkRader/fastapi-template/commit/b45f8721be995695f97613116ec856ee6dbd34d3))
+* change base id from str to UUID ([b815849](https://github.com/DarkRader/fastapi-template/commit/b8158492c9c4b215a7c88e37427c16ca662c457d))
+* docs strings and fix import for UserServiceDep ([16c3e92](https://github.com/DarkRader/fastapi-template/commit/16c3e9288f83d3e9f2100112a2a26f958ae4872e))
+* move db session under infrastructure ([3ff1fc7](https://github.com/DarkRader/fastapi-template/commit/3ff1fc7cfeeab0eea4fc2a87d844c44283c48cc3))
+* move models and shemas under domain module ([3566d56](https://github.com/DarkRader/fastapi-template/commit/3566d56f6c0b881c1d40fd365be86b3452c5615b))
+* settings config - add APP section ([efb1818](https://github.com/DarkRader/fastapi-template/commit/efb1818e4fb01ef9aad169ad0714bf8b78731cca))
+
 ## [0.1.0](https://github.com/DarkRader/fastapi-template/compare/v0.0.1...v0.1.0) (2026-03-07)
 
 
