@@ -3,7 +3,7 @@ name = "template-api"
 version = "0.1.0"
 description = "Template for FastAPI projects"
 authors = [{ name = "Artem Kuznetsov", email = "artyom.20century@gmail.com" }]
-requires-python = "==3.14.0"
+requires-python = "==3.14.4"
 dependencies = [
     "fastapi==0.135.1",
     "uvicorn[standard]==0.41.0",
