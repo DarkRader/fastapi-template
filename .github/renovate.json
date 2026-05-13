@@ -3,13 +3,16 @@
   "extends": [
     "config:recommended"
   ],
+  "timezone": "Europe/Prague",
+  "rangeStrategy": "pin",
+  "labels": ["dependencies"],
   "baseBranches": ["main"],
   "prConcurrentLimit": 5,
   "platformAutomerge": true,
+
   "packageRules": [
-    {
-      "matchUpdateTypes": ["patch", "minor"],
-      "automerge": true
-    }
+    { "matchPackagePatterns": ["*"], "matchUpdateTypes": ["patch"], "automerge": true, "prPriority": 20, "addLabels": ["patch"] },
+    { "matchPackagePatterns": ["*"], "matchUpdateTypes": ["minor"], "automerge": true, "prPriority": 20, "addLabels": ["minor"] },
+    { "matchPackagePatterns": ["*"], "matchUpdateTypes": ["major"], "automerge": false, "prPriority": 20, "addLabels": ["major"] }
   ]
 }
