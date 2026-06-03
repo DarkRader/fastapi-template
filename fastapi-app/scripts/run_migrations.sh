@@ -8,7 +8,7 @@ PROJECT_ROOT=$(dirname "$0")/..
 cd "$PROJECT_ROOT" || exit
 
 alembic upgrade head
-cd src/
+# cd src/
 echo "Migrations applied!"
 
 exec "$@"

@@ -25,4 +25,4 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 RUN chmod +x scripts/run_migrations.sh
 
 ENTRYPOINT ["scripts/run_migrations.sh"]
-CMD ["python", "main.py"]
+CMD ["uv", "run", "python", "src/main.py"]
