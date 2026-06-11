@@ -2,7 +2,7 @@
 services:
   template-db:
     container_name: template-db
-    image: postgres:18.3
+    image: postgres:18.4
     restart: on-failure
     environment:
       POSTGRES_USER: dev
