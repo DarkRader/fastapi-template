@@ -1,8 +1,9 @@
 """DTO schemes for User entity."""
 
 from datetime import datetime
+from uuid import UUID
 
-from pydantic import UUID7, BaseModel, ConfigDict, EmailStr, computed_field
+from pydantic import BaseModel, ConfigDict, EmailStr, computed_field
 
 
 class UserBase(BaseModel):
@@ -31,7 +32,7 @@ class UserUpdate(BaseModel):
 class User(UserBase):
     """Base model for user in database."""
 
-    id: UUID7
+    id: UUID
 
     created_at: datetime
     updated_at: datetime | None = None

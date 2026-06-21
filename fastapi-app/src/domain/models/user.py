@@ -1,6 +1,6 @@
 """User ORM model and its dependencies."""
 
-from domain.models.base_class import Base
+from domain.models.base import Base
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 

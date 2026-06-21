@@ -7,9 +7,10 @@ this interface and handle actual database interactions.
 
 from abc import ABC, abstractmethod
 from typing import TypeVar
+from uuid import UUID
 
-from domain.models.base_class import Base
-from pydantic import UUID7, BaseModel
+from domain.models.base import Base
+from pydantic import BaseModel
 
 Model = TypeVar("Model", bound=Base)
 CreateSchema = TypeVar("CreateSchema", bound=BaseModel)
@@ -22,7 +23,7 @@ class CRUDBase[Model, CreateSchema, UpdateSchema](ABC):
     @abstractmethod
     async def get(
         self,
-        id_: UUID7,
+        id_: UUID,
         *,
         include_removed: bool = False,
     ) -> Model | None:
@@ -88,7 +89,7 @@ class CRUDBase[Model, CreateSchema, UpdateSchema](ABC):
         """Retrieve removed object from soft removed."""
 
     @abstractmethod
-    async def remove(self, id_: UUID7 | int) -> Model:
+    async def remove(self, id_: UUID) -> Model:
         """Remove a record by its id_."""
 
     @abstractmethod

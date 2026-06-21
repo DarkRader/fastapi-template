@@ -1,12 +1,11 @@
 """Module with SQLAlchemy base class used to create other models from this Base class."""
 
-import uuid
 from datetime import datetime
-from uuid import uuid7
+from uuid import UUID
 
 from core import get_utc_now, settings
 from domain.models.soft_delete_mixin import SoftDeleteMixin
-from sqlalchemy import UUID, DateTime, MetaData, func
+from sqlalchemy import DateTime, MetaData, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
 
@@ -17,11 +16,10 @@ class Base(DeclarativeBase, SoftDeleteMixin):
 
     metadata = MetaData(naming_convention=settings.DB.NAMING_CONVENTION)
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+    id: Mapped[UUID] = mapped_column(
         primary_key=True,
-        default=uuid7,
-        server_default=func.gen_random_uuid(),
+        default=UUID,
+        server_default=func.uuidv7(),
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

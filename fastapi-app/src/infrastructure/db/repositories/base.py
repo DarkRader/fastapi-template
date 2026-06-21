@@ -8,10 +8,11 @@ interface, not on this concrete implementation.
 
 from datetime import UTC, datetime
 from typing import Any, TypeVar
+from uuid import UUID
 
 from core.ports.repositories.base import CRUDBase
-from domain.models.base_class import Base
-from pydantic import UUID7, BaseModel
+from domain.models.base import Base
+from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -29,7 +30,7 @@ class SQLAlchemyCRUDBase(CRUDBase[Model, CreateSchema, UpdateSchema]):
 
     async def get(
         self,
-        id_: UUID7,
+        id_: UUID,
         *,
         include_removed: bool = False,
     ) -> Model | None:
@@ -105,7 +106,7 @@ class SQLAlchemyCRUDBase(CRUDBase[Model, CreateSchema, UpdateSchema]):
         await self.db.commit()
         return obj
 
-    async def remove(self, id_: UUID7 | int) -> Model:
+    async def remove(self, id_: UUID) -> Model:
         stmt = (
             select(self.model).execution_options(include_deleted=True).filter(self.model.id == id_)
         )
@@ -144,7 +145,7 @@ class SQLAlchemyCRUDBase(CRUDBase[Model, CreateSchema, UpdateSchema]):
 
     async def _check_id_and_return_obj_from_db_by_id(
         self,
-        id_: UUID7,
+        id_: UUID,
     ) -> Model | None:
         """
         Retrieve a database object by its primary key.

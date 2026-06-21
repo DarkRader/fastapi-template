@@ -3,10 +3,11 @@
 import re
 from enum import Enum
 from typing import Any, NoReturn
+from uuid import UUID
 
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
-from pydantic import UUID7, BaseModel
+from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 
 
@@ -118,7 +119,7 @@ class EntityNotFoundError(BaseAppError):
     def __init__(
         self,
         entity: Entity,
-        entity_id: UUID7 | str | int,
+        entity_id: UUID | str,
         message: str | None = None,
         **kwargs: object,
     ) -> None:
